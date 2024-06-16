@@ -1,0 +1,15 @@
+G:\Ultatel_task\Ultatel\Ultatel.Models\bin\Debug\net8.0\Ultatel.Models.deps.json
+G:\Ultatel_task\Ultatel\Ultatel.Models\bin\Debug\net8.0\Ultatel.Models.runtimeconfig.json
+G:\Ultatel_task\Ultatel\Ultatel.Models\bin\Debug\net8.0\Ultatel.Models.dll
+G:\Ultatel_task\Ultatel\Ultatel.Models\bin\Debug\net8.0\Ultatel.Models.pdb
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.csproj.AssemblyReference.cache
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.GeneratedMSBuildEditorConfig.editorconfig
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.AssemblyInfoInputs.cache
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.AssemblyInfo.cs
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.csproj.CoreCompileInputs.cache
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.sourcelink.json
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.dll
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\refint\Ultatel.Models.dll
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.pdb
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\Ultatel.Models.genruntimeconfig.cache
+G:\Ultatel_task\Ultatel\Ultatel.Models\obj\Debug\net8.0\ref\Ultatel.Models.dll
