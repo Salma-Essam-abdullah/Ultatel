@@ -6,6 +6,7 @@ using Ultatel.BusinessLoginLayer.Services.Contracts;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 using Microsoft.Extensions.Logging;
+using Ultatel.BusinessLoginLayer.Helpers;
 
 namespace Ultatel.BusinessLoginLayer.Services
 {
@@ -116,19 +117,21 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
-        public async Task<IEnumerable<StudentDto>> ShowAllStudentsAsync()
+        public async Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize)
         {
             try
             {
-                var student = await _unitOfWork._studentRepository.GetAllAsync();
-                if (student == null)
+                var students = await _unitOfWork._studentRepository.GetAllAsync();
+                if (students == null || !students.Any())
                 {
                     throw new Exception("No Students Found");
                 }
 
-                IEnumerable<StudentDto> studentDto = _mapper.Map<IEnumerable<StudentDto>>(student);
-                return studentDto;
+                var totalStudents = students.Count();
+                var paginatedStudents = students.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(paginatedStudents);
 
+                return new Pagination<StudentDto>(pageIndex, pageSize, totalStudents, studentDtos.ToList());
             }
             catch (Exception ex)
             {

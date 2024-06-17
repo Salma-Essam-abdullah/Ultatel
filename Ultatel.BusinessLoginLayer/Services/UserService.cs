@@ -27,9 +27,6 @@ namespace Ultatel.BusinessLoginLayer.Services
             _securityService = securityService;
         }
 
-
-        //handle errors in this and register admin
-        // DON'T FORGEEEEEEEEEEEEEEEEEEEEEET
         public async Task<Response> RegisterUserAsync(RegisterDto model)
         {
             try
@@ -114,17 +111,17 @@ namespace Ultatel.BusinessLoginLayer.Services
                 }
 
                 var claims = new List<Claim>
-                    {
-                        new Claim("Email", model.Email),
-                        new Claim("UserId", user.Id),
-                        new Claim("UserName", user.UserName)
-                    };
+                {
+                    new Claim("Email", model.Email),
+                    new Claim("UserId", user.Id),
+                    new Claim("UserName", user.UserName)
+                };
 
                 var userRoles = await _userManager.GetRolesAsync(user);
 
                 foreach (var role in userRoles)
                 {
-                    claims.Add(new Claim("Role", role));
+                    claims.Add(new Claim(ClaimTypes.Role, role));
                     if (role == "admin")
                     {
                         claims.Add(new Claim("IsAdmin", "true"));
@@ -155,5 +152,10 @@ namespace Ultatel.BusinessLoginLayer.Services
             }
         }
 
-    }
+
+
+
+    
+
+}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ultatel.BusinessLoginLayer.Dtos;
 using Ultatel.BusinessLoginLayer.Errors;
@@ -22,6 +23,7 @@ namespace Ultatel.Api.Controllers
 
 
         [HttpPost("AddStudent/{userId}")]
+       
         public async Task<ActionResult> AddStudent(StudentDto model, string? userId)
         {
             try
@@ -154,19 +156,15 @@ namespace Ultatel.Api.Controllers
             }
         }
 
-
-
-
         [HttpGet("ShowStudent")]
-        public async Task<ActionResult> ShowAllStudents()
+        //[Authorize(Roles = "admin")]
+        public async Task<ActionResult> ShowAllStudents([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             try
             {
+                var result = await _studentService.ShowAllStudentsAsync(pageIndex, pageSize);
 
-
-                var result = await _studentService.ShowAllStudentsAsync();
-
-                if (result == null)
+                if (result == null || !result.Data.Any())
                 {
                     return NotFound(new Response
                     {
@@ -175,7 +173,6 @@ namespace Ultatel.Api.Controllers
                         Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
                     });
                 }
-
 
                 return Ok(result);
             }
@@ -190,6 +187,7 @@ namespace Ultatel.Api.Controllers
                 });
             }
         }
+
 
 
         [HttpPatch("UpdateStudent/{studentId}")]
@@ -232,6 +230,12 @@ namespace Ultatel.Api.Controllers
                 });
             }
         }
+
+
+
+
+
+
 
     }
 }

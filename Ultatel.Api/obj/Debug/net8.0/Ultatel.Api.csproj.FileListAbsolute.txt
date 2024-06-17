@@ -150,3 +150,4 @@ G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\ru\Microsoft.CodeAnalysis.W
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll

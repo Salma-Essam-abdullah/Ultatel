@@ -13,39 +13,30 @@ namespace Ultatel.BusinessLoginLayer.Services
 {
     public class SecurityService : ISecurityService
     {
-
         private readonly IConfiguration _configuration;
 
         public SecurityService(IConfiguration configuration)
         {
-
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-       
-
-        public void SecureToken(List<Claim> claims, out JwtSecurityToken token, out string TokenString)
+        public void SecureToken(List<Claim> claims, out JwtSecurityToken token, out string tokenString)
         {
-            try
-            {
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-                 token = new JwtSecurityToken(
+            var key = Convert.FromBase64String(_configuration["JWT:SecretKey"]);
+            var symmetricSecurityKey = new SymmetricSecurityKey(key);
+            var credentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
-                audience: _configuration["JWT:ValidAudiance"],
+            token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
-                claims : claims,
-                expires: DateTime.UtcNow.AddDays(1),
-                
+                audience: _configuration["JWT:ValidAudience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JWT:Duration"])),
+                signingCredentials: credentials
+            );
 
-                signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
-                );
-
-                TokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            tokenString = new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
     }
 }
