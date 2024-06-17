@@ -37,7 +37,7 @@ namespace Ultatel.Api.Controllers
                 {
                     return BadRequest(new Response
                     {
-                        Message = "Invalid properties",
+                        Message = ErrorMsg.InvalidProperties,
                         isSucceeded = false,
                         Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
                     });
@@ -54,10 +54,10 @@ namespace Ultatel.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while registering the user");
+                _logger.LogError(ex, ErrorMsg.AnErrorOccured);
                 return StatusCode(500, new Response
                 {
-                    Message = "An unexpected error occurred. Please try again later.",
+                    Message = ErrorMsg.GeneralErrorMsg,
                     isSucceeded = false,
                     Errors = new[] { ex.Message }
                 });
@@ -73,7 +73,7 @@ namespace Ultatel.Api.Controllers
                 {
                     return BadRequest(new Response
                     {
-                        Message = "Invalid properties",
+                        Message = ErrorMsg.InvalidProperties,
                         isSucceeded = false,
                         Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
                     });
@@ -90,17 +90,15 @@ namespace Ultatel.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while registering the admin");
+                _logger.LogError(ex, ErrorMsg.AnErrorOccured);
                 return StatusCode(500, new Response
                 {
-                    Message = "An unexpected error occurred. Please try again later.",
+                    Message = ErrorMsg.UnExpectedError,
                     isSucceeded = false,
                     Errors = new[] { ex.Message }
                 });
             }
         }
-
-
 
         [HttpPost("Login")]
         public async Task<ActionResult> LoginAsync(LoginDto model)

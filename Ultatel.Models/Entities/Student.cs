@@ -24,6 +24,7 @@ namespace Ultatel.Models.Entities
         [EmailAddress]
         public string Email { get; set; }
 
+       
         public Gender Gender { get; set; }
 
         public DateTime BirthDate { get; set; }

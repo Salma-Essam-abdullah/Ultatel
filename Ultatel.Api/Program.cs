@@ -12,6 +12,8 @@ using Ultatel.DataAccessLayer;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.DataAccessLayer.Repositories;
 using Ultatel.Models.Entities.Identity;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Ultatel.Api
 {
@@ -23,7 +25,10 @@ namespace Ultatel.Api
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -66,7 +71,7 @@ namespace Ultatel.Api
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
 
-            //builder.Services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+
 
             builder.Services.AddSwaggerGen(c =>
             {

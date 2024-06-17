@@ -11,12 +11,16 @@
             public const string None = "";
             public const string InvalidProperties  = "Some properties are not valid";
             public const string InvalidUser = "User not found.";
-            public const string EmailNotConfirm = "Email address has not confirm."; public const string NoUserEmail = "No user associated with email";
+            public const string EmailNotConfirm = "Email address has not confirm."; 
+        public const string NoUserEmail = "No user associated with email";
             public const string ResetPasswordSuccess = "Reset password URL has been sent to the email successfully!";
             public const string InvalidPassword = "Invalid password";
             public const string NullModel = "Reigster Model is null";
             public const string UserNotCreated = "User did not create";
             public const string GeneralErrorMsg = "Something went wrong";
+            public const string UnExpectedError = "An unexpected error occurred. Please try again later.";
+        public const string AnErrorOccured = "An error occurred while registering";
+        public const string NotFound = "Student Not Found";
 
         public static class Msg
         { 

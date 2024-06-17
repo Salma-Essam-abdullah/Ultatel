@@ -11,10 +11,12 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
     public interface IStudentService
     {
         Task<Response> AddStudentAsync(StudentDto model);
-        Task<Response> UpdateStudentAsync(StudentDto model);
+        Task<UpdateStudentDto> UpdateStudentAsync(int studentId, UpdateStudentDto model);
         Task<Response> DeleteStudentAsync(int studentId);
+        Task<StudentDto> ShowStudentAsync(int studentId);
+        Task<IEnumerable<StudentDto>> ShowAllStudentsAsync();
 
-        Task<Response> ShowStudentAsync(int studentId);
+
 
 
     }

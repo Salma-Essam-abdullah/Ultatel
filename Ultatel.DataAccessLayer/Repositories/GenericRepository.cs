@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
+using Ultatel.Models.Entities;
 
 namespace Ultatel.DataAccessLayer.Repositories
 {
-    public class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly UltatelDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -25,7 +26,7 @@ namespace Ultatel.DataAccessLayer.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -35,13 +36,14 @@ namespace Ultatel.DataAccessLayer.Repositories
             return await _dbSet.ToListAsync();
         }
 
-        public async Task UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+            return entity;
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)
@@ -50,6 +52,8 @@ namespace Ultatel.DataAccessLayer.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+      
     }
 
 }
