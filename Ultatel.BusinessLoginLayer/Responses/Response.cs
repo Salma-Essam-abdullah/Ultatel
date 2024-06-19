@@ -16,5 +16,12 @@ namespace Ultatel.BusinessLoginLayer.Responses
 
         public DateTime? ExpireDate { get; set; }
 
+        public TokenResponse TokenData { get; set; }
+
+    }
+    public class TokenResponse
+    {
+        public string Token { get; set; }
+        public DateTime ExpireDate { get; set; }
     }
 }

@@ -31,11 +31,16 @@ namespace Ultatel.DataAccessLayer.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<T>> GetAllAsync(int pageIndex, int pageSize)
         {
-            return await _dbSet.ToListAsync();
+            return await _dbSet.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
+
+        public async Task<int> CountAsync()
+        {
+            return await _dbSet.CountAsync();
+        }
         public async Task<T> UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
@@ -52,8 +57,8 @@ namespace Ultatel.DataAccessLayer.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+       
 
-      
     }
 
 }

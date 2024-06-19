@@ -156,9 +156,12 @@ namespace Ultatel.Api.Controllers
             }
         }
 
-        [HttpGet("ShowStudent")]
+
+
+
+        [HttpGet("ShowAllStudents")]
         //[Authorize(Roles = "admin")]
-        public async Task<ActionResult> ShowAllStudents([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult> ShowAllStudents(int pageIndex = 1, int pageSize = 10)
         {
             try
             {
@@ -187,7 +190,6 @@ namespace Ultatel.Api.Controllers
                 });
             }
         }
-
 
 
         [HttpPatch("UpdateStudent/{studentId}")]
@@ -233,6 +235,41 @@ namespace Ultatel.Api.Controllers
 
 
 
+
+        [HttpGet("ShowAllStudents/{userId}")]
+        //[Authorize(Roles = "admin")]
+        public async Task<ActionResult> ShowAllStudentsByUserId(string userId, int pageIndex = 1, int pageSize = 10)
+        {
+            try
+            {
+
+
+                var result = await _studentService.ShowAllStudentsByUserId(userId,pageIndex,pageSize);
+
+                if (result == null)
+                {
+                    return NotFound(new Response
+                    {
+                        Message = ErrorMsg.NotFound,
+                        isSucceeded = false,
+                        Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                    });
+                }
+
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ErrorMsg.NotFound);
+                return StatusCode(500, new Response
+                {
+                    Message = ErrorMsg.GeneralErrorMsg,
+                    isSucceeded = false,
+                    Errors = new[] { ex.Message }
+                });
+            }
+        }
 
 
 

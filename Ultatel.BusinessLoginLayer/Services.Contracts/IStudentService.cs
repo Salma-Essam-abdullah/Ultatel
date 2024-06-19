@@ -17,6 +17,8 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
         Task<StudentDto> ShowStudentAsync(int studentId);
         Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize);
 
+        Task<Pagination<StudentDto>> ShowAllStudentsByUserId(string userId, int pageIndex, int pageSize);
+
 
 
 

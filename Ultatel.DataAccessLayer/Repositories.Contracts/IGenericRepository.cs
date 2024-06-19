@@ -11,9 +11,14 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
     {
         Task AddAsync(T entity);
         Task<T> GetByIdAsync(int id);
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IEnumerable<T>> GetAllAsync(int pageIndex, int pageSize);
         Task<T> UpdateAsync(T entity);
         Task DeleteAsync(int id);
+
+     
+
+        Task<int> CountAsync();
+      
     }
 
 }

@@ -121,23 +121,24 @@ namespace Ultatel.BusinessLoginLayer.Services
         {
             try
             {
-                var students = await _unitOfWork._studentRepository.GetAllAsync();
+                var students = await _unitOfWork._studentRepository.GetAllAsync(pageIndex, pageSize);
                 if (students == null || !students.Any())
                 {
                     throw new Exception("No Students Found");
                 }
 
-                var totalStudents = students.Count();
-                var paginatedStudents = students.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(paginatedStudents);
+                var totalCount = await _unitOfWork._studentRepository.CountAsync();
+                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
 
-                return new Pagination<StudentDto>(pageIndex, pageSize, totalStudents, studentDtos.ToList());
+                return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
+
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while fetching students data", ex);
             }
         }
+
 
 
         public async Task<StudentDto> ShowStudentAsync(int studentId)
@@ -197,5 +198,29 @@ namespace Ultatel.BusinessLoginLayer.Services
                 throw new Exception("An error occurred while updating the student.", ex);
             }
         }
+
+        public async Task<Pagination<StudentDto>> ShowAllStudentsByUserId(string userId, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var students = await _unitOfWork._studentRepositoryN.GetStudentsByUserIdAsync(userId,pageIndex,pageSize);
+
+                if (students == null || !students.Any())
+                {
+                    throw new Exception("No Students Found for the specified User");
+                }
+
+                var totalCount = await _unitOfWork._studentRepositoryN.CountAsyncByUserId(userId);
+                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
+
+                return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
+           
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching students data", ex);
+            }
+        }
+
     }
-    }
+}
