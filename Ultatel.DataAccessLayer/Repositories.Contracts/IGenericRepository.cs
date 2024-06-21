@@ -15,8 +15,6 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
         Task<T> UpdateAsync(T entity);
         Task DeleteAsync(int id);
 
-     
-
         Task<int> CountAsync();
       
     }

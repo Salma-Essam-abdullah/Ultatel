@@ -21,6 +21,8 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
 
         Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto);
 
+        Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(int studentId);
+
 
     }
 }

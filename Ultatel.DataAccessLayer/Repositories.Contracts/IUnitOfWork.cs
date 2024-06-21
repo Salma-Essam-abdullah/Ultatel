@@ -17,6 +17,8 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
         public IStudentRepository _studentRepositoryN { get; set; }
         public IGenericRepository<StudentLogs> _studentLogsRepository { get; set; }
 
+        public IStudentLogsRepository _studentLogsRepositoryN { get; set; }
+
 
 
     }

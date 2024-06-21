@@ -90,6 +90,7 @@ namespace Ultatel.Api
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
             }).AddJwtBearer(options =>
             {
                 var key = Convert.FromBase64String(builder.Configuration["JWT:SecretKey"]);
@@ -107,6 +108,7 @@ namespace Ultatel.Api
             {
                 options.ClientId = builder.Configuration["Google:ClientId"];
                 options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+                options.CallbackPath = "/signin-google";
             }); 
 
 
@@ -117,6 +119,7 @@ namespace Ultatel.Api
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped(typeof(IStudentRepository), typeof(StudentRepository));
+            builder.Services.AddScoped(typeof(IStudentLogsRepository), typeof(StudentsLogsRepository));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

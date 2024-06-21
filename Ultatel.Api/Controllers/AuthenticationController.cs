@@ -8,6 +8,10 @@ using Ultatel.Models.Entities.Identity;
 using Ultatel.Models.Entities;
 using Ultatel.BusinessLoginLayer.Services;
 using Ultatel.BusinessLoginLayer.Responses;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
 
 namespace Ultatel.Api.Controllers
 {
@@ -120,8 +124,27 @@ namespace Ultatel.Api.Controllers
             {
               return BadRequest(ex.Message);
             }
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
         }
 
+
+
+        ///////////////////////////////////
+
+    
 
     }
 }

@@ -271,6 +271,30 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
+        public async Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(int studentId)
+        {
+            if (studentId == 0)
+            {
+                throw new ArgumentNullException(nameof(studentId), "Student ID cannot be zero");
+            }
+
+            try
+            {
+                var studentLogs = await _unitOfWork._studentLogsRepositoryN.GetStudentLogs(studentId);
+             
+                if (studentLogs == null || !studentLogs.Any())
+                {
+                    throw new Exception("Student Logs not found");
+                }
+
+                var studentLogsDto = _mapper.Map<IEnumerable<StudentLogsDto>>(studentLogs);
+                return studentLogsDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while fetching student logs data", ex);
+            }
+        }
 
 
     }

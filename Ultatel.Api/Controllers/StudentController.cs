@@ -158,7 +158,7 @@ namespace Ultatel.Api.Controllers
 
 
         [HttpGet("ShowAllStudents")]
-        [Authorize(Roles = "admin")] 
+      
         public async Task<ActionResult> ShowAllStudents(int pageIndex = 1, int pageSize = 10)
         {
             try
@@ -275,6 +275,60 @@ namespace Ultatel.Api.Controllers
             var students = await _studentService.SearchStudentsAsync(searchDto);
             return Ok(students);
         }
+
+
+
+
+
+        //logs
+
+
+        [HttpGet("ShowStudentLogs/{studentId}")]
+        public async Task<ActionResult> ShowStudentLogs(int studentId)
+        {
+            try
+            {
+                if (studentId == 0)
+                {
+                    return BadRequest(new Response
+                    {
+                        Message = ErrorMsg.InvalidProperties,
+                        isSucceeded = false,
+                        Errors = new[] { "Invalid student ID provided" }
+                    });
+                }
+           
+
+               var result = await _studentService.ShowStudentLogs(studentId);
+                
+
+                if (result == null || !result.Any())
+                {
+                    return NotFound(new Response
+                    {
+                        Message = ErrorMsg.NotFound,
+                        isSucceeded = false,
+                        Errors = new[] { "No logs found for the given student ID" }
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ErrorMsg.GeneralErrorMsg);
+                return StatusCode(500, new Response
+                {
+                    Message = ErrorMsg.GeneralErrorMsg,
+                    isSucceeded = false,
+                    Errors = new[] { ex.Message }
+                });
+            }
+        }
+
+
+
+
 
 
 
