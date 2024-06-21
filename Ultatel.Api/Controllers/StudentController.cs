@@ -22,8 +22,8 @@ namespace Ultatel.Api.Controllers
         }
 
 
-        [HttpPost("AddStudent/{userId}")]
-       
+        [HttpPost("{userId}")]
+
         public async Task<ActionResult> AddStudent(StudentDto model, string? userId)
         {
             try
@@ -72,7 +72,7 @@ namespace Ultatel.Api.Controllers
 
 
 
-        [HttpGet("ShowStudent/{studentId}")]
+        [HttpGet("{studentId}")]
         public async Task<ActionResult> ShowStudent(int studentId)
         {
             try
@@ -115,7 +115,7 @@ namespace Ultatel.Api.Controllers
 
 
 
-        [HttpDelete("DeleteStudent/{studentId}")]
+        [HttpDelete("{studentId}")]
         public async Task<ActionResult> DeleteStudent(int studentId)
         {
             try
@@ -157,8 +157,8 @@ namespace Ultatel.Api.Controllers
         }
 
 
-        [HttpGet("ShowAllStudents")]
-      
+        [HttpGet]
+
         public async Task<ActionResult> ShowAllStudents(int pageIndex = 1, int pageSize = 10)
         {
             try
@@ -190,7 +190,7 @@ namespace Ultatel.Api.Controllers
         }
 
 
-        [HttpPatch("UpdateStudent/{studentId}")]
+        [HttpPatch("{studentId}")]
         public async Task<ActionResult> UpdateStudent(int studentId, [FromBody] UpdateStudentDto model)
         {
             try
@@ -234,14 +234,14 @@ namespace Ultatel.Api.Controllers
 
 
 
-        [HttpGet("ShowAllStudents/{userId}")]
-       
+        [HttpGet("User/{userId}")]
+
         public async Task<ActionResult> ShowAllStudentsByUserId(string userId, int pageIndex = 1, int pageSize = 10)
         {
             try
             {
-               
-                var result = await _studentService.ShowAllStudentsByUserId(userId,pageIndex,pageSize);
+
+                var result = await _studentService.ShowAllStudentsByUserId(userId, pageIndex, pageSize);
 
                 if (result == null)
                 {
@@ -269,7 +269,7 @@ namespace Ultatel.Api.Controllers
         }
 
 
-        [HttpPost]
+        [HttpPost("Search")]
         public async Task<IActionResult> Search(StudentSearchDto searchDto)
         {
             var students = await _studentService.SearchStudentsAsync(searchDto);
@@ -283,7 +283,7 @@ namespace Ultatel.Api.Controllers
         //logs
 
 
-        [HttpGet("ShowStudentLogs/{studentId}")]
+        [HttpGet("Logs/{studentId}")]
         public async Task<ActionResult> ShowStudentLogs(int studentId)
         {
             try
@@ -297,10 +297,10 @@ namespace Ultatel.Api.Controllers
                         Errors = new[] { "Invalid student ID provided" }
                     });
                 }
-           
 
-               var result = await _studentService.ShowStudentLogs(studentId);
-                
+
+                var result = await _studentService.ShowStudentLogs(studentId);
+
 
                 if (result == null || !result.Any())
                 {
@@ -325,15 +325,5 @@ namespace Ultatel.Api.Controllers
                 });
             }
         }
-
-
-
-
-
-
-
-
-
-
     }
 }

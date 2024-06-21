@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ultatel.BusinessLoginLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f91764b5a17eff1b5ee5fab18973a2801269b1a7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3f83cf392789cab34877a3074cfef275a074c5f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ultatel.BusinessLoginLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ultatel.BusinessLoginLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
