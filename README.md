@@ -1,12 +1,6 @@
 .NET Web API CRUD Application
 
 This repository contains a .NET Web API CRUD application built using an N-tier architecture. The application allows you to perform Create, Read, Update, and Delete operations on a database.
-Table of Contents
-
-    Technologies Used
-    Project Structure
-    Setup Instructions
-    Running the Application
 
 Technologies Used
 
