@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ultatel.DataAccessLayer")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cbf711eabf9fd49d2d066afe9950493c4a9b2abb")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4550f248c278957fcfb7faee5f34d5e84cec6ae2")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ultatel.DataAccessLayer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ultatel.DataAccessLayer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

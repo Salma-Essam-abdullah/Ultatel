@@ -157,10 +157,8 @@ namespace Ultatel.Api.Controllers
         }
 
 
-
-
         [HttpGet("ShowAllStudents")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")] 
         public async Task<ActionResult> ShowAllStudents(int pageIndex = 1, int pageSize = 10)
         {
             try
@@ -237,13 +235,12 @@ namespace Ultatel.Api.Controllers
 
 
         [HttpGet("ShowAllStudents/{userId}")]
-        //[Authorize(Roles = "admin")]
+       
         public async Task<ActionResult> ShowAllStudentsByUserId(string userId, int pageIndex = 1, int pageSize = 10)
         {
             try
             {
-
-
+               
                 var result = await _studentService.ShowAllStudentsByUserId(userId,pageIndex,pageSize);
 
                 if (result == null)
@@ -270,6 +267,16 @@ namespace Ultatel.Api.Controllers
                 });
             }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Search(StudentSearchDto searchDto)
+        {
+            var students = await _studentService.SearchStudentsAsync(searchDto);
+            return Ok(students);
+        }
+
+
 
 
 

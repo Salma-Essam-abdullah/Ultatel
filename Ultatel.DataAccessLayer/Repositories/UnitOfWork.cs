@@ -14,11 +14,14 @@ namespace Ultatel.DataAccessLayer.Repositories
         public IGenericRepository<Student> _studentRepository { get; set; }
 
         public IStudentRepository _studentRepositoryN { get; set; }
-        public UnitOfWork(IGenericRepository<Admin> adminRepository, IGenericRepository<Student> studentRepository, IStudentRepository studentRepositoryN)
+        public IGenericRepository<StudentLogs> _studentLogsRepository { get; set; }
+
+        public UnitOfWork(IGenericRepository<Admin> adminRepository, IGenericRepository<Student> studentRepository, IStudentRepository studentRepositoryN , IGenericRepository<StudentLogs> studentLogsRepository)
         {
             _adminRepository = adminRepository;
             _studentRepository = studentRepository;
             _studentRepositoryN = studentRepositoryN;
+            _studentLogsRepository = studentLogsRepository;
         }
     }
 }

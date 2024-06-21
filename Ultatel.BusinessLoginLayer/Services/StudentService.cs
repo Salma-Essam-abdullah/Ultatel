@@ -7,6 +7,7 @@ using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 using Microsoft.Extensions.Logging;
 using Ultatel.BusinessLoginLayer.Helpers;
+using Ultatel.DataAccessLayer.Repositories;
 
 namespace Ultatel.BusinessLoginLayer.Services
 {
@@ -33,12 +34,25 @@ namespace Ultatel.BusinessLoginLayer.Services
                 }
 
                 var student = _mapper.Map<Student>(model);
-                await _unitOfWork._studentRepository.AddAsync(student);
+
+               var std =  await _unitOfWork._studentRepository.AddAsync(student);
+
+                var studentLogsDto = new StudentLogsDto
+                {
+                    StudentId = student.Id,
+                    Operation = "added",
+                    OperationTime = DateTime.Now,
+                    UserId = student.AppUserId,
+                };
+                var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
+              
+                await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
 
                 return new Response
                 {
                     Message = "Student registered successfully",
-                    isSucceeded = true
+                    isSucceeded = true,
+                    std = std,
                 };
             }
             catch (ArgumentNullException argEx)
@@ -85,8 +99,10 @@ namespace Ultatel.BusinessLoginLayer.Services
 
                     };
                 }
-
+            
                 await _unitOfWork._studentRepository.DeleteAsync(studentId);
+
+
 
                 return new Response
                 {
@@ -166,7 +182,7 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
-        public async Task<UpdateStudentDto> UpdateStudentAsync(int studentId, UpdateStudentDto model)
+        public async Task<Response> UpdateStudentAsync(int studentId, UpdateStudentDto model)
         {
             try
             {
@@ -186,11 +202,25 @@ namespace Ultatel.BusinessLoginLayer.Services
                     }
                 }
 
-                await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
+               var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
 
+                var studentLogsDto = new StudentLogsDto
+                {
+                    StudentId = studentToUpdate.Id,
+                    Operation = "updated",
+                    OperationTime = DateTime.Now,
+                    UserId = studentToUpdate.AppUserId,
+                };
+                var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
                 var updatedStudentDto = _mapper.Map<UpdateStudentDto>(studentToUpdate);
+                await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
 
-                return updatedStudentDto;
+                   return new Response
+                {
+                    Message = "Student updated successfully",
+                    isSucceeded = true,
+                    std = std,
+                }; ;
             }
             catch (Exception ex)
             {
@@ -200,7 +230,7 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
         public async Task<Pagination<StudentDto>> ShowAllStudentsByUserId(string userId, int pageIndex, int pageSize)
-        {
+        {   
             try
             {
                 var students = await _unitOfWork._studentRepositoryN.GetStudentsByUserIdAsync(userId,pageIndex,pageSize);
@@ -221,6 +251,27 @@ namespace Ultatel.BusinessLoginLayer.Services
                 throw new Exception("An error occurred while fetching students data", ex);
             }
         }
+
+
+
+
+
+
+
+        public async Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto)
+        {
+            var students = await _unitOfWork._studentRepositoryN.SearchStudentsAsync(
+                searchDto.Name,
+                searchDto.AgeFrom,
+                searchDto.AgeTo,
+                searchDto.Country,
+                searchDto.Gender
+            );
+            return _mapper.Map<IEnumerable<StudentDto>>(students);
+        }
+
+
+
 
     }
 }

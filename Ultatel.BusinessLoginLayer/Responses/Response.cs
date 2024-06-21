@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ultatel.Models.Entities;
 
 namespace Ultatel.BusinessLoginLayer.Responses
 {
@@ -17,6 +18,8 @@ namespace Ultatel.BusinessLoginLayer.Responses
         public DateTime? ExpireDate { get; set; }
 
         public TokenResponse TokenData { get; set; }
+
+        public Student std { get; set; }
 
     }
     public class TokenResponse

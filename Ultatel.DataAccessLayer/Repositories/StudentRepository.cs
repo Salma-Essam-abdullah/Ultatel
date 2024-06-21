@@ -34,6 +34,42 @@ namespace Ultatel.DataAccessLayer.Repositories
         }
 
 
-       
+
+        public async Task<IEnumerable<Student>> SearchStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(s => s.FirstName.Contains(name) || s.LastName.Contains(name));
+            }
+
+            if (ageFrom.HasValue)
+            {
+                var ageFromDate = DateTime.Now.AddYears(-ageFrom.Value);
+                query = query.Where(s => s.BirthDate <= ageFromDate);
+            }
+
+            if (ageTo.HasValue)
+            {
+                var ageToDate = DateTime.Now.AddYears(-ageTo.Value);
+                query = query.Where(s => s.BirthDate >= ageToDate);
+            }
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                query = query.Where(s => s.Country == country);
+            }
+
+            if (gender.HasValue)
+            {
+                query = query.Where(s => s.Gender == gender.Value);
+            }
+
+            return await query.ToListAsync();
+        }
+
+
+
     }
 }

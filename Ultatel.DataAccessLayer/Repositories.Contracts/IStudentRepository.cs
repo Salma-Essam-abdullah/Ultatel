@@ -11,5 +11,6 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
     {
         Task<int> CountAsyncByUserId(string userId);
         Task<IEnumerable<Student>> GetStudentsByUserIdAsync(string userId, int pageIndex, int pageSize);
+        Task<IEnumerable<Student>> SearchStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender);
     }
 }
