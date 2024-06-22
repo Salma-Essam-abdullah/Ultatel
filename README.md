@@ -38,7 +38,8 @@ Update the database:
 Open the Package Manager Console in Visual Studio and run the following commands:
 Update-Database
 
-
+📝 NOTE: There is an endpoint to register admin so that 
+Admin users VIEW LOGS OF ALL STUDENTS
 
 
 # Deployment Overview
