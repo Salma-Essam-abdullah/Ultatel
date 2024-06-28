@@ -27,10 +27,7 @@ namespace Ultatel.DataAccessLayer.Repositories
             return await _dbSet.FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(int pageIndex, int pageSize)
-        {
-            return await _dbSet.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-        }
+       
 
 
         public async Task<int> CountAsync()

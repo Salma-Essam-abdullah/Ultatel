@@ -10,9 +10,9 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
         Task<StudentResponse> UpdateStudentAsync(Guid studentId, UpdateStudentDto model);
         Task<Response> DeleteStudentAsync(Guid studentId);
         Task<StudentResponse> ShowStudentAsync(Guid studentId);
-        Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize);
+        Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
-        Task<Pagination<StudentDto>> ShowAllStudentsByAdminId(Guid adminId, int pageIndex, int pageSize);
+        Task<Pagination<StudentDto>> ShowStudentsByAdminId(Guid adminId, int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
         Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto);
 
@@ -20,5 +20,8 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
 
         Task<bool> EmailExistsAsync(string email);
         Task<bool> EmailUpdateExistsAsync(string newEmail, string currentEmail);
+
+
     }
+
 }

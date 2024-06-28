@@ -114,23 +114,26 @@ namespace Ultatel.Api.Controllers
         }
 
         [Authorize(Roles = "Admin,superAdmin")]
-        [HttpGet("ShowAllStudents")]
-        public async Task<ActionResult> ShowAllStudents(int pageIndex = 1, int pageSize = 10)
+        [HttpGet]
+        public async Task<ActionResult> ShowAllStudents(string sortBy = null, bool isDescending = false, int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _studentService.ShowAllStudentsAsync(pageIndex, pageSize);
 
-            if (result == null || !result.Data.Any())
+
+            var result = await _studentService.ShowAllStudentsAsync(pageIndex, pageSize, sortBy, isDescending);
+
+            if (result == null)
             {
                 return NotFound(new Response
                 {
                     Message = "NotFound",
                     isSucceeded = false,
-                    Errors = new Dictionary<string, string> { { "students", "No students found." } }
+                    Errors = new Dictionary<string, string> { { "students", "No students found" } }
                 });
             }
 
             return Ok(result);
         }
+    
 
         [Authorize(Roles = "Admin")]
         [HttpPatch("UpdateStudent/{studentId}")]
@@ -169,29 +172,46 @@ namespace Ultatel.Api.Controllers
 
             return Ok(updatedStudent);
         }
-
         [Authorize(Roles = "Admin")]
-        [HttpGet("User/ShowAllStudentsByUserId")]
-        public async Task<ActionResult> ShowAllStudentsByUserId(int pageIndex = 1, int pageSize = 10)
+        [HttpGet("User")]
+        public async Task<ActionResult> ShowAllStudentsByUserId(string sortBy = null, bool isDescending = false, int pageIndex = 1, int pageSize = 10)
         {
             var userGuidClaim = User.FindFirst("UserGuid");
+            if (userGuidClaim == null)
+            {
+                return Unauthorized();
+            }
+
             string userGuidValue = userGuidClaim.Value;
             Guid adminId = Guid.Parse(userGuidValue);
 
-            var result = await _studentService.ShowAllStudentsByAdminId(adminId, pageIndex, pageSize);
-
-            if (result == null)
+            try
             {
-                return NotFound(new Response
+                var result = await _studentService.ShowStudentsByAdminId(adminId, pageIndex, pageSize, sortBy, isDescending);
+
+                if (result == null)
                 {
-                    Message = "NotFound",
+                    return NotFound(new Response
+                    {
+                        Message = "NotFound",
+                        isSucceeded = false,
+                        Errors = new Dictionary<string, string> { { "students", "No students found for the specified admin." } }
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Response
+                {
+                    Message = "Error",
                     isSucceeded = false,
-                    Errors = new Dictionary<string, string> { { "students", "No students found for the specified admin." } }
+                    Errors = new Dictionary<string, string> { { "error", ex.Message } }
                 });
             }
-
-            return Ok(result);
         }
+
 
         [Authorize(Roles = "Admin,superAdmin")]
         [HttpPost("Search")]
@@ -229,5 +249,8 @@ namespace Ultatel.Api.Controllers
 
             return Ok(result);
         }
+
+
+
     }
 }

@@ -121,10 +121,10 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize)
+       public async Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
            
-                var students = await _unitOfWork._studentRepository.GetAllAsync(pageIndex, pageSize);
+                var students = await _unitOfWork._studentRepositoryNonGeneric.GetAllStudentsAsync(pageIndex, pageSize,sortBy,isDescending);
                 if (students == null || !students.Any())
                 {
                     throw new Exception("No Students Found");
@@ -268,11 +268,14 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<Pagination<StudentDto>> ShowAllStudentsByAdminId(Guid adminId, int pageIndex, int pageSize)
-        {   
+
+
+
+        public async Task<Pagination<StudentDto>> ShowStudentsByAdminId(Guid adminId, int pageIndex, int pageSize, string sortBy = null, bool isDescending = false)
+        {
             try
             {
-                var students = await _unitOfWork._studentRepositoryNonGeneric.GetStudentsByAdminIdAsync(adminId, pageIndex,pageSize);
+                var students = await _unitOfWork._studentRepositoryNonGeneric.GetStudentsSortedByAdminId(adminId, pageIndex, pageSize, sortBy, isDescending);
 
                 if (students == null || !students.Any())
                 {
@@ -283,13 +286,13 @@ namespace Ultatel.BusinessLoginLayer.Services
                 var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
 
                 return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
-           
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while fetching students data", ex);
             }
         }
+
 
 
         public async Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto)
