@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Ultatel.BusinessLoginLayer.Middleware
 {
@@ -62,5 +61,7 @@ namespace Ultatel.BusinessLoginLayer.Middleware
             var result = JsonConvert.SerializeObject(new { error = message });
             return context.Response.WriteAsync(result);
         }
-    }
+    
+
+}
 }
