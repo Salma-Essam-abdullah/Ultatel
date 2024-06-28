@@ -25,7 +25,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JWT:Duration"])),
+                expires: DateTime.UtcNow.AddHours(Convert.ToInt32(_configuration["JWT:Duration"])),
                 signingCredentials: credentials
             );
 
