@@ -28,8 +28,6 @@ namespace Ultatel.DataAccessLayer.Repositories
         }
 
        
-
-
         public async Task<int> CountAsync()
         {
             return await _dbSet.CountAsync();

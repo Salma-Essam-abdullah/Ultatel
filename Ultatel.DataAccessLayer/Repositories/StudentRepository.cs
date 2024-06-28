@@ -17,17 +17,14 @@ namespace Ultatel.DataAccessLayer.Repositories
             _dbSet = _context.Set<Student>();
 
         }
-        public async Task<IEnumerable<Student>> GetStudentsByAdminIdAsync(Guid adminId, int pageIndex, int pageSize)
-        {
-            return await _context.Students
-                .Where(s => s.AdminId == adminId).Skip((pageIndex - 1) * pageSize).Take(pageSize)
-                .ToListAsync();
-        }
+
+    
+
+
 
         public async Task<int> CountAsyncByUserId(Guid adminId)
         {
-            return await _context.Students
-                .Where(s => s.AdminId == adminId).CountAsync();
+            return await _context.Students.CountAsync();
         }
         public async Task<bool> AnyAsync(Expression<Func<Student, bool>> predicate)
         {
@@ -71,35 +68,7 @@ namespace Ultatel.DataAccessLayer.Repositories
         }
 
 
-        public async Task<IEnumerable<Student>> GetStudentsSortedByAdminId(Guid adminId, int pageIndex, int pageSize, string? sortBy, bool isDescending)
-        {
-            var query = _context.Students.Where(s => s.AdminId == adminId);
-
-            switch (sortBy?.ToLower())
-            {
-                case "name":
-                    query = isDescending ? query.OrderByDescending(s => s.FirstName + " " + s.LastName) : query.OrderBy(s => s.FirstName + " " + s.LastName);
-                    break;
-                case "country":
-                    query = isDescending ? query.OrderByDescending(s => s.Country) : query.OrderBy(s => s.Country);
-                    break;
-                case "age":
-                    query = isDescending ? query.OrderByDescending(s => EF.Functions.DateDiffYear(s.BirthDate, DateTime.Now)) : query.OrderBy(s => EF.Functions.DateDiffYear(s.BirthDate, DateTime.Now));
-                    break;
-                case "email":
-                    query = isDescending ? query.OrderByDescending(s => s.Email) : query.OrderBy(s => s.Email);
-                    break;
-                case "gender":
-                    query = isDescending ? query.OrderByDescending(s => s.Gender) : query.OrderBy(s => s.Gender);
-                    break;
-                default:
-                    query = query.OrderBy(s => s.Id); 
-                    break;
-            }
-
-            return await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
-        }
-
+       
         public async Task<IEnumerable<Student>> GetAllStudentsAsync( int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
             IQueryable<Student> query = _context.Students;
@@ -126,8 +95,16 @@ namespace Ultatel.DataAccessLayer.Repositories
                     break;
             }
 
-            return await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).Include(a=>a.Admins).ToListAsync();
+
+
+
         }
+
+
+
+
+       
 
     }
 }

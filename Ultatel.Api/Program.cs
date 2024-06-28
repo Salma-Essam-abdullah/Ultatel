@@ -39,14 +39,13 @@ namespace Ultatel.Api
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add(new CustomExceptionFilter());
-            });
-            builder.Services.AddControllers().AddJsonOptions(options =>
+            }).AddNewtonsoftJson(options =>
             {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-                
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
+         
 
-        
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -93,7 +92,6 @@ namespace Ultatel.Api
             .AddEntityFrameworkStores<UltatelDbContext>()
             .AddDefaultTokenProviders();
 
-            // Configure JWT Authentication
             builder.Services.AddAuthentication(auth =>
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -112,11 +110,6 @@ namespace Ultatel.Api
                     ValidAudience = builder.Configuration["JWT:ValidAudience"],
                     IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
-            }).AddGoogle(options =>
-            {
-                options.ClientId = builder.Configuration["Google:ClientId"];
-                options.ClientSecret = builder.Configuration["Google:ClientSecret"];
-                options.CallbackPath = "/signin-google";
             });
 
             builder.Services.AddTransient<UpdateStudentValidator>();

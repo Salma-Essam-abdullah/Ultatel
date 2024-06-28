@@ -47,6 +47,8 @@ namespace Ultatel.BusinessLoginLayer.Dtos
 
         public string Country { get; set; }
 
-        public Guid AdminId { get; set; }
+
+
+
     }
 }

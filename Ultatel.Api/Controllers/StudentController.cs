@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ultatel.BusinessLoginLayer.Dtos;
 using Ultatel.BusinessLoginLayer.Responses;
 using Ultatel.BusinessLoginLayer.Services.Contracts;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace Ultatel.Api.Controllers
 {
@@ -23,7 +20,7 @@ namespace Ultatel.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPost("AddStudent")]
+        [HttpPost]
         public async Task<ActionResult> AddStudent(StudentDto model)
         {
             if (!ModelState.IsValid)
@@ -39,13 +36,7 @@ namespace Ultatel.Api.Controllers
                 });
             }
 
-            var userGuidClaim = User.FindFirst("UserGuid");
-            string userGuidValue = userGuidClaim.Value;
-            Guid adminId = Guid.Parse(userGuidValue);
-
-            model.AdminId = adminId;
-
-            var result = await _studentService.AddStudentAsync(model);
+            var result = await _studentService.AddStudentAsync(model, User);
 
             if (result.isSucceeded)
             {
@@ -54,6 +45,8 @@ namespace Ultatel.Api.Controllers
 
             return BadRequest(result);
         }
+
+
 
         [Authorize(Roles = "Admin,superAdmin")]
         [HttpGet("ShowStudent/{studentId}")]
@@ -172,46 +165,7 @@ namespace Ultatel.Api.Controllers
 
             return Ok(updatedStudent);
         }
-        [Authorize(Roles = "Admin")]
-        [HttpGet("User")]
-        public async Task<ActionResult> ShowAllStudentsByUserId(string sortBy = null, bool isDescending = false, int pageIndex = 1, int pageSize = 10)
-        {
-            var userGuidClaim = User.FindFirst("UserGuid");
-            if (userGuidClaim == null)
-            {
-                return Unauthorized();
-            }
-
-            string userGuidValue = userGuidClaim.Value;
-            Guid adminId = Guid.Parse(userGuidValue);
-
-            try
-            {
-                var result = await _studentService.ShowStudentsByAdminId(adminId, pageIndex, pageSize, sortBy, isDescending);
-
-                if (result == null)
-                {
-                    return NotFound(new ValidationResponse
-                    {
-                        Message = "NotFound",
-                        isSucceeded = false,
-                        Errors = new Dictionary<string, string> { { "students", "No students found for the specified admin." } }
-                    });
-                }
-
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ValidationResponse
-                {
-                    Message = "Error",
-                    isSucceeded = false,
-                    Errors = new Dictionary<string, string> { { "error", ex.Message } }
-                });
-            }
-        }
-
+      
 
         [Authorize(Roles = "Admin,superAdmin")]
         [HttpPost("Search")]

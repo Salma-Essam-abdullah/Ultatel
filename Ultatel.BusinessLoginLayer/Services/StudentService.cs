@@ -6,6 +6,7 @@ using Ultatel.BusinessLoginLayer.Services.Contracts;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 using Ultatel.BusinessLoginLayer.Helpers;
+using System.Security.Claims;
 
 
 namespace Ultatel.BusinessLoginLayer.Services
@@ -24,7 +25,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             _validator = validator;
             _updateStudentValidator = updateStudentValidator;
         }
-        public async Task<StudentResponse> AddStudentAsync(StudentDto model)
+        public async Task<StudentResponse> AddStudentAsync(StudentDto model, ClaimsPrincipal user)
         {
             if (model == null)
             {
@@ -58,27 +59,42 @@ namespace Ultatel.BusinessLoginLayer.Services
             }
 
             var student = _mapper.Map<Student>(model);
+
+            var userGuidClaim = user.FindFirst("UserGuid");
+            if (userGuidClaim == null || string.IsNullOrEmpty(userGuidClaim.Value) || !Guid.TryParse(userGuidClaim.Value, out var adminId))
+            {
+                return new StudentResponse
+                {
+                    Message = "AdminIdError",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "adminId", "Invalid admin ID." } }
+                };
+            }
+
+            var admin = await _unitOfWork._adminRepository.GetByIdAsync(adminId);
+            if (admin == null)
+            {
+                return new StudentResponse
+                {
+                    Message = "AdminNotFound",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "admin", "Admin not found." } }
+                };
+            }
+
+            student.Admins.Add(admin);
+
             var std = await _unitOfWork._studentRepository.AddAsync(student);
 
-            var studentLogsDto = new StudentLogsDto
-            {
-                StudentId = student.Id,
-                Operation = "added",
-                OperationTime = DateTime.Now,
-                AdminId = std.AdminId,
-            };
-            var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
-
-            await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
+            var studentDto = _mapper.Map<StudentDto>(std);
 
             return new StudentResponse
             {
                 Message = "Student registered successfully",
                 isSucceeded = true,
-                student = std,
+                studentDto = studentDto
             };
         }
-
         public async Task<bool> EmailExistsAsync(string email)
         {
             return await _unitOfWork._studentRepositoryNonGeneric.AnyAsync(s => s.Email == email);
@@ -245,17 +261,17 @@ namespace Ultatel.BusinessLoginLayer.Services
                 }
             }
 
-            var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
+            //var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
 
-            var studentLogsDto = new StudentLogsDto
-            {
-                StudentId = studentToUpdate.Id,
-                Operation = "updated",
-                OperationTime = DateTime.Now,
-                AdminId = studentToUpdate.AdminId,
-            };
-            var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
-            await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
+            //var studentLogsDto = new StudentLogsDto
+            //{
+            //    StudentId = studentToUpdate.Id,
+            //    Operation = "updated",
+            //    OperationTime = DateTime.Now,
+            //    AdminId = studentToUpdate.AdminId,
+            //};
+            //var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
+            //await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
 
             return new StudentResponse
             {
@@ -264,33 +280,6 @@ namespace Ultatel.BusinessLoginLayer.Services
                 Errors = null,
                 student = studentToUpdate
             };
-        }
-
-
-
-
-
-
-        public async Task<Pagination<StudentDto>> ShowStudentsByAdminId(Guid adminId, int pageIndex, int pageSize, string sortBy = null, bool isDescending = false)
-        {
-            try
-            {
-                var students = await _unitOfWork._studentRepositoryNonGeneric.GetStudentsSortedByAdminId(adminId, pageIndex, pageSize, sortBy, isDescending);
-
-                if (students == null || !students.Any())
-                {
-                    throw new Exception("No Students Found for the specified User");
-                }
-
-                var totalCount = await _unitOfWork._studentRepositoryNonGeneric.CountAsyncByUserId(adminId);
-                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
-
-                return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching students data", ex);
-            }
         }
 
 

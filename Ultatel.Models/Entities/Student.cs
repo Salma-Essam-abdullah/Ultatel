@@ -25,14 +25,12 @@ namespace Ultatel.Models.Entities
 
         public string Country { get; set; }
 
-        public Guid AdminId { get; set; }
-
-        public Admin AppUser { get; set; }
+        public ICollection<Admin> Admins { get; set; } = new List<Admin>();
 
 
 
 
-       
+
     }
 
 }

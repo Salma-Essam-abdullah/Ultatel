@@ -11,13 +11,13 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
     public interface IStudentRepository
     {
         Task<int> CountAsyncByUserId(Guid adminId);
-        Task<IEnumerable<Student>> GetStudentsByAdminIdAsync(Guid adminId, int pageIndex, int pageSize);
+      
         Task<IEnumerable<Student>> SearchStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender);
 
         Task<bool> AnyAsync(Expression<Func<Student, bool>> predicate);
 
-        Task<IEnumerable<Student>> GetStudentsSortedByAdminId(Guid adminId, int pageIndex, int pageSize, string? sortBy, bool isDescending);
-
         Task<IEnumerable<Student>> GetAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending);
+
+       
     }
-}
+}   

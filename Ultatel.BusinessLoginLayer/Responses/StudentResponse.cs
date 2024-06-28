@@ -11,6 +11,7 @@ namespace Ultatel.BusinessLoginLayer.Responses
     public class StudentResponse:ValidationResponse
     {
     
+        public StudentDto studentDto {  get; set; }
         public Student student { get; set; }
         public List<StudentDto> Students { get; set; }
 

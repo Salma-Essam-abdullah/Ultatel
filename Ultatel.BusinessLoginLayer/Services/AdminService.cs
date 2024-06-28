@@ -229,9 +229,6 @@ namespace Ultatel.BusinessLoginLayer.Services
             };
         }
 
-
-
-
         public async Task<AdminDto> GetAdminByUserId(string userId)
         {
             var admin =await _unitOfWork._adminRepositoryNonGeneric.GetAdminByUserId(userId);

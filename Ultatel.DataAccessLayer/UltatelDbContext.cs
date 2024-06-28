@@ -16,6 +16,15 @@ namespace Ultatel.DataAccessLayer
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Student>()
+           .HasMany(s => s.Admins)
+           .WithMany(c => c.Students)
+           .UsingEntity<Dictionary<string, object>>(
+               "AdminStudent",
+               j => j.HasOne<Admin>().WithMany().HasForeignKey("AdminId"),
+               j => j.HasOne<Student>().WithMany().HasForeignKey("StudentId")
+           );
+
             base.OnModelCreating(modelBuilder); 
         }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ultatel.DataAccessLayer;
 
@@ -11,9 +12,11 @@ using Ultatel.DataAccessLayer;
 namespace Ultatel.DataAccessLayer.Migrations
 {
     [DbContext(typeof(UltatelDbContext))]
-    partial class UltatelDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240628182325_m6")]
+    partial class m6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,15 +27,15 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("AdminStudent", b =>
                 {
-                    b.Property<Guid>("AdminId")
+                    b.Property<Guid>("AdminsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("StudentId")
+                    b.Property<Guid>("StudentsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("AdminId", "StudentId");
+                    b.HasKey("AdminsId", "StudentsId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentsId");
 
                     b.ToTable("AdminStudent");
                 });
@@ -337,13 +340,13 @@ namespace Ultatel.DataAccessLayer.Migrations
                 {
                     b.HasOne("Ultatel.Models.Entities.Admin", null)
                         .WithMany()
-                        .HasForeignKey("AdminId")
+                        .HasForeignKey("AdminsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Ultatel.Models.Entities.Student", null)
                         .WithMany()
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("StudentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -10,6 +10,6 @@ namespace Ultatel.Models.Entities
         public AppUser AppUser { get; set; }
 
 
-        public ICollection<Student> Students { get; set; }
+        public ICollection<Student> Students { get; set; } = new List<Student>();
     }
 }

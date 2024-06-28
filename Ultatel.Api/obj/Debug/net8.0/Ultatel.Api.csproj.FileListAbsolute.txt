@@ -153,3 +153,6 @@ G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnaly
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.Google.dll
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Nager.Country.dll
 G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Newtonsoft.Json.dll
+G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+G:\Ultatel_task\Ultatel\Ultatel.Api\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll

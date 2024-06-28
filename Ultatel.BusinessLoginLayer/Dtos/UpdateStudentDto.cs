@@ -21,6 +21,5 @@ namespace Ultatel.BusinessLoginLayer.Dtos
 
         public string? Country { get; set; }
 
-        public string? AppUserId { get; set; }
     }
 }
