@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using Ultatel.Models.Entities;
 
 namespace Ultatel.BusinessLoginLayer.Dtos
@@ -36,7 +31,7 @@ namespace Ultatel.BusinessLoginLayer.Dtos
     public class StudentDto
     {
 
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -52,6 +47,6 @@ namespace Ultatel.BusinessLoginLayer.Dtos
 
         public string Country { get; set; }
 
-        public string AppUserId { get; set; }
+        public Guid AdminId { get; set; }
     }
 }

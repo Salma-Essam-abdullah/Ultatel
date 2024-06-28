@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ultatel.Models.Entities.Identity;
 
 namespace Ultatel.Models.Entities
 {
@@ -31,9 +25,9 @@ namespace Ultatel.Models.Entities
 
         public string Country { get; set; }
 
-        public string AppUserId { get; set; }
+        public Guid AdminId { get; set; }
 
-        public AppUser AppUser { get; set; }
+        public Admin AppUser { get; set; }
 
 
 

@@ -68,6 +68,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.6, )"
+            },
+            "Nager.Country": {
+              "target": "Package",
+              "version": "[4.0.0, )"
             }
           },
           "imports": [

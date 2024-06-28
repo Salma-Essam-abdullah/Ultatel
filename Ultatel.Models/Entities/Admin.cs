@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Ultatel.Models.Entities.Identity;
 
 namespace Ultatel.Models.Entities
@@ -15,5 +10,6 @@ namespace Ultatel.Models.Entities
         public AppUser AppUser { get; set; }
 
 
+        public ICollection<Student> Students { get; set; }
     }
 }

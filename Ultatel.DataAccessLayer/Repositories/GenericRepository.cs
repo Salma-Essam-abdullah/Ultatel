@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 
@@ -27,7 +22,7 @@ namespace Ultatel.DataAccessLayer.Repositories
             return entity;
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(Guid id)
         {
             return await _dbSet.FindAsync(id);
         }
@@ -49,7 +44,7 @@ namespace Ultatel.DataAccessLayer.Repositories
             return entity;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             var entity = await _dbSet.FindAsync(id);
             if (entity != null)

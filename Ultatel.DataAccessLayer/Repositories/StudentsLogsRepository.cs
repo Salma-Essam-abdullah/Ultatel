@@ -1,9 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 
@@ -20,10 +15,10 @@ namespace Ultatel.DataAccessLayer.Repositories
             _dbSet = _context.Set<StudentLogs>();
 
         }
-        public async Task<IEnumerable<StudentLogs>> GetStudentLogs(int studentId)
+        public async Task<IEnumerable<StudentLogs>> GetStudentLogs(Guid studentId)
         {
             return await _dbSet
-               .Where(s => s.StudentId == studentId).Include(a => a.AppUser).ToListAsync();
+               .Where(s => s.StudentId == studentId).Include(a => a.Admin).ThenInclude(admin => admin.AppUser).ToListAsync();
         }
     }
 }

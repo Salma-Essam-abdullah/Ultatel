@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "SRziJtKhX6a8w9nZt9tTYoMtyyCfpLy6cf0K7sZgXbdVvQK+oDTZwzjFDfjUFmViRaqls27EDag6Hg2+Cvn5Hg==",
+  "dgSpecHash": "AH1ICE5WcBTDUsZxvLolH7P4haBuvJn+LMK3vLEjB/RLPOWDEbwtVwLAyv0vMzWj6xwjOfutxUoZhRzXp8ElTA==",
   "success": true,
   "projectFilePath": "G:\\Ultatel_task\\Ultatel\\Ultatel.DataAccessLayer\\Ultatel.DataAccessLayer.csproj",
   "expectedPackageFiles": [
@@ -53,6 +53,7 @@
     "C:\\Users\\SALMA\\.nuget\\packages\\microsoft.sqlserver.server\\1.0.0\\microsoft.sqlserver.server.1.0.0.nupkg.sha512",
     "C:\\Users\\SALMA\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\SALMA\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\SALMA\\.nuget\\packages\\nager.country\\4.0.0\\nager.country.4.0.0.nupkg.sha512",
     "C:\\Users\\SALMA\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\SALMA\\.nuget\\packages\\system.collections.immutable\\6.0.0\\system.collections.immutable.6.0.0.nupkg.sha512",
     "C:\\Users\\SALMA\\.nuget\\packages\\system.composition\\6.0.0\\system.composition.6.0.0.nupkg.sha512",

@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
 
@@ -20,17 +17,21 @@ namespace Ultatel.DataAccessLayer.Repositories
             _dbSet = _context.Set<Student>();
 
         }
-        public async Task<IEnumerable<Student>> GetStudentsByUserIdAsync(string userId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<Student>> GetStudentsByAdminIdAsync(Guid adminId, int pageIndex, int pageSize)
         {
             return await _context.Students
-                .Where(s => s.AppUserId == userId).Skip((pageIndex - 1) * pageSize).Take(pageSize)
+                .Where(s => s.AdminId == adminId).Skip((pageIndex - 1) * pageSize).Take(pageSize)
                 .ToListAsync();
         }
 
-        public async Task<int> CountAsyncByUserId(string userId)
+        public async Task<int> CountAsyncByUserId(Guid adminId)
         {
             return await _context.Students
-                .Where(s => s.AppUserId == userId).CountAsync();
+                .Where(s => s.AdminId == adminId).CountAsync();
+        }
+        public async Task<bool> AnyAsync(Expression<Func<Student, bool>> predicate)
+        {
+            return await _context.Set<Student>().AnyAsync(predicate);
         }
 
 
@@ -46,13 +47,13 @@ namespace Ultatel.DataAccessLayer.Repositories
 
             if (ageFrom.HasValue)
             {
-                var ageFromDate = DateTime.Now.AddYears(-ageFrom.Value);
+                var ageFromDate = DateTime.Today.AddYears(-ageFrom.Value);
                 query = query.Where(s => s.BirthDate <= ageFromDate);
             }
 
             if (ageTo.HasValue)
             {
-                var ageToDate = DateTime.Now.AddYears(-ageTo.Value);
+                var ageToDate = DateTime.Today.AddYears(-ageTo.Value - 1).AddDays(1);
                 query = query.Where(s => s.BirthDate >= ageToDate);
             }
 
@@ -68,6 +69,8 @@ namespace Ultatel.DataAccessLayer.Repositories
 
             return await query.ToListAsync();
         }
+
+
 
 
 

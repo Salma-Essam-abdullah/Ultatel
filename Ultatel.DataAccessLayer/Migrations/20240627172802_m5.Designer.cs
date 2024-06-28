@@ -12,8 +12,8 @@ using Ultatel.DataAccessLayer;
 namespace Ultatel.DataAccessLayer.Migrations
 {
     [DbContext(typeof(UltatelDbContext))]
-    [Migration("20240616114307_email address")]
-    partial class emailaddress
+    [Migration("20240627172802_m5")]
+    partial class m5
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -160,11 +160,9 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Ultatel.Models.Entities.Admin", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
@@ -231,10 +229,6 @@ namespace Ultatel.DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -248,15 +242,12 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Ultatel.Models.Entities.Student", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("AdminId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -282,7 +273,7 @@ namespace Ultatel.DataAccessLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("AdminId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -292,11 +283,12 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Ultatel.Models.Entities.StudentLogs", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("AdminId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Operation")
                         .IsRequired()
@@ -305,20 +297,33 @@ namespace Ultatel.DataAccessLayer.Migrations
                     b.Property<DateTime>("OperationTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentLogs");
+                });
+
+            modelBuilder.Entity("Ultatel.Models.Entities.SuperAdmin", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AppUserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("AppUserId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("StudentLogs");
+                    b.ToTable("SuperAdmins");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,9 +390,9 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Ultatel.Models.Entities.Student", b =>
                 {
-                    b.HasOne("Ultatel.Models.Entities.Identity.AppUser", "AppUser")
+                    b.HasOne("Ultatel.Models.Entities.Admin", "AppUser")
                         .WithMany("Students")
-                        .HasForeignKey("AppUserId")
+                        .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -396,24 +401,35 @@ namespace Ultatel.DataAccessLayer.Migrations
 
             modelBuilder.Entity("Ultatel.Models.Entities.StudentLogs", b =>
                 {
+                    b.HasOne("Ultatel.Models.Entities.Admin", "Admin")
+                        .WithMany()
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ultatel.Models.Entities.Student", "Student")
                         .WithMany()
                         .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ultatel.Models.Entities.Identity.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
+                    b.Navigation("Admin");
 
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("Ultatel.Models.Entities.Identity.AppUser", b =>
+            modelBuilder.Entity("Ultatel.Models.Entities.SuperAdmin", b =>
+                {
+                    b.HasOne("Ultatel.Models.Entities.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Ultatel.Models.Entities.Admin", b =>
                 {
                     b.Navigation("Students");
                 });

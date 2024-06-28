@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Ultatel.BusinessLoginLayer.Dtos;
 using Ultatel.BusinessLoginLayer.Errors;
 using Ultatel.BusinessLoginLayer.Services.Contracts;
-using Ultatel.Models.Entities.Identity;
-using Ultatel.Models.Entities;
-using Ultatel.BusinessLoginLayer.Services;
 using Ultatel.BusinessLoginLayer.Responses;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
+
 
 namespace Ultatel.Api.Controllers
 {
@@ -33,118 +25,75 @@ namespace Ultatel.Api.Controllers
 
         }
         [HttpPost("Register")]
-        public async Task<ActionResult> RegisterAsync(RegisterDto model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(new Response
-                    {
-                        Message = ErrorMsg.InvalidProperties,
-                        isSucceeded = false,
-                        Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                    });
-                }
-
-                var result = await _userService.RegisterUserAsync(model);
-
-                if (result.isSucceeded)
-                {
-                    return Ok(result);
-                }
-
-                return BadRequest(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ErrorMsg.AnErrorOccured);
-                return StatusCode(500, new Response
-                {
-                    Message = ErrorMsg.GeneralErrorMsg,
-                    isSucceeded = false,
-                    Errors = new[] { ex.Message }
-                });
-            }
-        }
-
-        [HttpPost("RegisterAdmin")]
         public async Task<ActionResult> RegisterAdmin(RegisterDto model)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
+                return BadRequest(new Response
                 {
-                    return BadRequest(new Response
-                    {
-                        Message = ErrorMsg.InvalidProperties,
-                        isSucceeded = false,
-                        Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
-                    });
-                }
-
-                var result = await _adminService.RegisterAdminAsync(model);
-
-                if (result.isSucceeded)
-                {
-                    return Ok(result);
-                }
-
-                return BadRequest(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ErrorMsg.AnErrorOccured);
-                return StatusCode(500, new Response
-                {
-                    Message = ErrorMsg.UnExpectedError,
+                    Message = "InvalidProperties",
                     isSucceeded = false,
-                    Errors = new[] { ex.Message }
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToDictionary(error => error, error => error)
                 });
             }
+
+            var result = await _adminService.RegisterAdminAsync(model);
+
+            if (result.isSucceeded)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
+
+        [HttpPost("RegisterSuperAdmin")]
+        public async Task<ActionResult> RegisterSuperAdmin(RegisterDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new Response
+                {
+                    Message = "InvalidProperties",
+                    isSucceeded = false,
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToDictionary(error => error, error => error)
+                });
+            }
+
+            var result = await _adminService.RegisterSuperAdminAsync(model);
+
+            if (result.isSucceeded)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
 
         [HttpPost("Login")]
         public async Task<ActionResult> LoginAsync(LoginDto model)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                return BadRequest(new Response
                 {
-                    var result = await _userService.LoginUserAsync(model);
-                    if (result.isSucceeded)
-                    {
-                        return Ok(result);
-                    }
-                    return BadRequest(result);
-                }
-                return BadRequest(ErrorMsg.InvalidProperties); 
-
-            }catch(Exception ex)
-            {
-              return BadRequest(ex.Message);
+                    Message = "InvalidProperties",
+                    isSucceeded = false,
+                    Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToDictionary(error => error, error => error)
+                });
             }
 
+            var result = await _userService.LoginUserAsync(model);
+            if (result.isSucceeded)
+            {
+                return Ok(result);
+            }
 
-
-
-
-
-
-
-
-
-        
-
-
-
+            return BadRequest(result);
         }
 
 
-
-        ///////////////////////////////////
-
-    
 
     }
 }

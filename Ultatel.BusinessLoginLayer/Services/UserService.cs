@@ -1,17 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.WebUtilities;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Ultatel.BusinessLoginLayer.Dtos;
 using Ultatel.BusinessLoginLayer.Errors;
 using Ultatel.BusinessLoginLayer.Responses;
 using Ultatel.BusinessLoginLayer.Services.Contracts;
-using Ultatel.Models.Entities;
+using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities.Identity;
-using static Ultatel.BusinessLoginLayer.Errors.ErrorMsg;
 
 namespace Ultatel.BusinessLoginLayer.Services
 {
@@ -19,143 +14,90 @@ namespace Ultatel.BusinessLoginLayer.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ISecurityService _securityService;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly LoginUserValidator _loginValidator;
 
 
-        public UserService(UserManager<AppUser> userManager, ISecurityService securityService)
+
+        public UserService(UserManager<AppUser> userManager, ISecurityService securityService, IUnitOfWork unitOfWork, LoginUserValidator loginValidator)
         {
             _userManager = userManager;
             _securityService = securityService;
+            _loginValidator = loginValidator;
+            _unitOfWork = unitOfWork;
         }
 
-        public async Task<Response> RegisterUserAsync(RegisterDto model)
-        {
-            try
-            {
-                if (model == null)
-                {
-                    throw new NullReferenceException(ErrorMsg.NullModel);
-                }
 
-                if (model.Password != model.ConfirmPassword)
-                {
-                    return new Response
-                    {
-                        Message = Msg.ConfirmPasswordNotMatch,
-                        isSucceeded = false,
-                    };
-                }
-
-                var user = new AppUser
-                {
-                    Email = model.Email,
-                   
-                    UserName = model.FullName,
-                };
-
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    var confirmedEmailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var encodedEmailToken = Encoding.UTF8.GetBytes(confirmedEmailToken);
-                    var validEmailToken = WebEncoders.Base64UrlEncode(encodedEmailToken);
-                    // Send confirmation email (not shown)
-                    return new Response
-                    {
-                        Message = Msg.UserCreated,
-                        isSucceeded = true,
-                    };
-                }
-                else
-                {
-                    return new Response
-                    {
-                        Message = "User registration failed",
-                        isSucceeded = false,
-                        Errors = result.Errors.Select(e => e.Description)
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new Response
-                {
-                    Message = ex.Message,
-                    isSucceeded = false,
-                    Errors = new[] { ex.InnerException?.Message ?? ex.Message }
-                };
-            }
-        }
 
         public async Task<Response> LoginUserAsync(LoginDto model)
         {
-            try
+            var validationErrors = _loginValidator.Validate(model);
+            if (validationErrors.Count > 0)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
+                return new Response
                 {
-                    return new Response
-                    {
-                        Message = ErrorMsg.NoUserEmail,
-                        isSucceeded = false
-                    };
-                }
+                    Message = "ValidationError",
+                    isSucceeded = false,
+                    Errors = validationErrors
+                };
+            }
 
+            var errors = new Dictionary<string, string>();
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                errors.Add("Email", "No user found with this email.");
+            }
+            else
+            {
                 var result = await _userManager.CheckPasswordAsync(user, model.Password);
                 if (!result)
                 {
-                    return new Response
-                    {
-                        Message = ErrorMsg.InvalidPassword,
-                        isSucceeded = false
-                    };
+                    errors.Add("Password", "Invalid password.");
                 }
-
-                var claims = new List<Claim>
-                {
-                    new Claim("Email", model.Email),
-                    new Claim("UserId", user.Id),
-                    new Claim("UserName", user.UserName)
-                };
-
-                var userRoles = await _userManager.GetRolesAsync(user);
-
-                foreach (var role in userRoles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                    if (role == "admin")
-                    {
-                        claims.Add(new Claim("IsAdmin", "true"));
-                    }
-                }
-
-                if (!claims.Any(c => c.Type == "IsAdmin"))
-                {
-                    claims.Add(new Claim("IsAdmin", "false"));
-                }
-
-                // Security token generation
-                _securityService.SecureToken(claims, out JwtSecurityToken token, out string tokenString);
-                return new Response
-                {
-                    Message = tokenString,
-                    isSucceeded = true,
-                    ExpireDate = token.ValidTo
-                };
             }
-            catch (Exception ex)
+
+            if (errors.Any())
             {
                 return new Response
                 {
-                    Message = ex.Message,
+                    Message = "LoginFailed",
                     isSucceeded = false,
+                    Errors = errors
                 };
             }
+
+            var claims = new List<Claim>
+            {
+                new Claim("Email", model.Email),
+                new Claim("UserId", user.Id),
+                new Claim("UserName", user.UserName),
+            };
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var admin = await _unitOfWork._adminRepositoryNonGeneric.GetAdminByUserId(user.Id);
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+                if (role == "Admin" && admin != null)
+                {
+                    claims.Add(new Claim("UserGuid", admin.Id.ToString(), ClaimValueTypes.String));
+                }
+                if (role == "superAdmin")
+                {
+                    claims.Add(new Claim("IsSuperAdmin", "true"));
+                }
+            }
+
+            _securityService.SecureToken(claims, out JwtSecurityToken token, out string tokenString);
+            return new Response
+            {
+                Message = tokenString,
+                isSucceeded = true,
+            };
         }
+    }
 
-
-
-
-    
-
-}
 }

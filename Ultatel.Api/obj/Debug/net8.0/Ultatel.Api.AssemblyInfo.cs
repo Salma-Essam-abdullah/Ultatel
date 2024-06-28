@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ultatel.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d3f83cf392789cab34877a3074cfef275a074c5f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f98c93688f95d5128cf78343857250176d03db1b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ultatel.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ultatel.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

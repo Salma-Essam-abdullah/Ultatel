@@ -5,9 +5,8 @@ using Ultatel.BusinessLoginLayer.Responses;
 using Ultatel.BusinessLoginLayer.Services.Contracts;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
-using Microsoft.Extensions.Logging;
 using Ultatel.BusinessLoginLayer.Helpers;
-using Ultatel.DataAccessLayer.Repositories;
+
 
 namespace Ultatel.BusinessLoginLayer.Services
 {
@@ -15,128 +14,116 @@ namespace Ultatel.BusinessLoginLayer.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ILogger<StudentService> _logger;
+        private readonly UpdateStudentValidator _updateStudentValidator;
+        private readonly StudentValidator _validator;
 
-        public StudentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<StudentService> logger)
+        public StudentService(IUnitOfWork unitOfWork, IMapper mapper, StudentValidator validator, UpdateStudentValidator updateStudentValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-
-            _logger = logger;
+            _validator = validator;
+            _updateStudentValidator = updateStudentValidator;
         }
-        public async Task<Response> AddStudentAsync(StudentDto model)
+        public async Task<StudentResponse> AddStudentAsync(StudentDto model)
         {
-            try
+            if (model == null)
             {
-                if (model == null)
+                return new StudentResponse
                 {
-                    throw new ArgumentNullException(nameof(model), ErrorMsg.NullModel);
-                }
-
-                var student = _mapper.Map<Student>(model);
-
-               var std =  await _unitOfWork._studentRepository.AddAsync(student);
-
-                var studentLogsDto = new StudentLogsDto
-                {
-                    StudentId = student.Id,
-                    Operation = "added",
-                    OperationTime = DateTime.Now,
-                    UserId = student.AppUserId,
-                };
-                var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
-              
-                await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
-
-                return new Response
-                {
-                    Message = "Student registered successfully",
-                    isSucceeded = true,
-                    std = std,
-                };
-            }
-            catch (ArgumentNullException argEx)
-            {
-
-
-                return new Response
-                {
-                    Message = argEx.Message,
+                    Message = "NullModel",
                     isSucceeded = false,
-                    Errors = new[] { argEx.InnerException?.Message ?? argEx.Message }
+                    Errors = new Dictionary<string, string> { { "model", "The provided model is null." } }
                 };
             }
-            catch (Exception ex)
+
+            var errors = _validator.Validate(model);
+            if (errors.Count > 0)
             {
-
-
-                return new Response
+                return new StudentResponse
                 {
-                    Message = "An error occurred while registering the student.",
+                    Message = "ValidationError",
                     isSucceeded = false,
-                    Errors = new[] { ex.InnerException?.Message ?? ex.Message }
+                    Errors = errors
                 };
             }
+
+            if (await EmailExistsAsync(model.Email))
+            {
+                return new StudentResponse
+                {
+                    Message = "ValidationError",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "email", "A student with this email already exists." } }
+                };
+            }
+
+            var student = _mapper.Map<Student>(model);
+            var std = await _unitOfWork._studentRepository.AddAsync(student);
+
+            var studentLogsDto = new StudentLogsDto
+            {
+                StudentId = student.Id,
+                Operation = "added",
+                OperationTime = DateTime.Now,
+                AdminId = std.AdminId,
+            };
+            var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
+
+            await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
+
+            return new StudentResponse
+            {
+                Message = "Student registered successfully",
+                isSucceeded = true,
+                student = std,
+            };
         }
 
-
-
-        public async Task<Response> DeleteStudentAsync(int studentId)
+        public async Task<bool> EmailExistsAsync(string email)
         {
-            try
-            {
-                if (studentId == 0)
-                {
-                    throw new ArgumentNullException(ErrorMsg.NullModel);
-                }
-                var model = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
-                if (model == null)
-                {
-                    return new Response
-                    {
-                        Message = ErrorMsg.NotFound,
-                        isSucceeded = false,
-
-                    };
-                }
-            
-                await _unitOfWork._studentRepository.DeleteAsync(studentId);
-
-
-
-                return new Response
-                {
-                    Message = "Student Deleted successfully",
-                    isSucceeded = true
-                };
-            }
-            catch (ArgumentNullException argEx)
-            {
-
-
-                return new Response
-                {
-                    Message = argEx.Message,
-                    isSucceeded = false,
-                    Errors = new[] { argEx.InnerException?.Message ?? argEx.Message }
-                };
-            }
-            catch (Exception ex)
-            {
-                return new Response
-                {
-                    Message = "An error occurred while deleting the student.",
-                    isSucceeded = false,
-                    Errors = new[] { ex.InnerException?.Message ?? ex.Message }
-                };
-            }
+            return await _unitOfWork._studentRepositoryNonGeneric.AnyAsync(s => s.Email == email);
         }
+
+
+
+        public async Task<Response> DeleteStudentAsync(Guid studentId)
+        {
+            if (studentId == Guid.Empty)
+            {
+                return new Response
+                {
+                    Message = "Invalid",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "The provided student ID is empty." } }
+                };
+            }
+
+            var model = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
+            if (model == null)
+            {
+                return new Response
+                {
+                    Message = "NotFound",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "Student not found." } }
+                };
+            }
+
+            await _unitOfWork._studentRepository.DeleteAsync(studentId);
+
+            return new Response
+            {
+                Message = "Student deleted successfully",
+                isSucceeded = true
+            };
+        }
+
+
 
 
         public async Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize)
         {
-            try
-            {
+           
                 var students = await _unitOfWork._studentRepository.GetAllAsync(pageIndex, pageSize);
                 if (students == null || !students.Any())
                 {
@@ -148,99 +135,151 @@ namespace Ultatel.BusinessLoginLayer.Services
 
                 return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
 
-            }
-            catch (Exception ex)
+        }
+          
+        
+
+
+
+        public async Task<StudentResponse> ShowStudentAsync(Guid studentId)
+        {
+            if (studentId == Guid.Empty)
             {
-                throw new Exception("An error occurred while fetching students data", ex);
+                return new StudentResponse
+                {
+                    Message = "Invalid",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "The provided student ID is empty." } },
+                    student = null
+                };
             }
+
+            var student = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
+            if (student == null)
+            {
+                return new StudentResponse
+                {
+                    Message = "NotFound",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "Student not found." } },
+                    student = null
+                };
+            }
+
+            return new StudentResponse
+            {
+                Message = "Success",
+                isSucceeded = true,
+                Errors = null,
+                student = student
+            };
+        }
+        public async Task<bool> EmailUpdateExistsAsync(string newEmail, string currentEmail)
+        {
+            if (newEmail == currentEmail)
+            {
+                return false;
+            }
+
+            return await _unitOfWork._studentRepositoryNonGeneric.AnyAsync(s => s.Email == newEmail);
         }
 
 
-
-        public async Task<StudentDto> ShowStudentAsync(int studentId)
+        public async Task<StudentResponse> UpdateStudentAsync(Guid studentId, UpdateStudentDto model)
         {
-            if (studentId == 0)
+            if (studentId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(studentId), "Student ID cannot be zero");
+                return new StudentResponse
+                {
+                    Message = "Invalid",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "The provided student ID is empty." } },
+                    student = null
+                };
             }
 
-            try
+            var studentToUpdate = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
+            if (studentToUpdate == null)
             {
-                var student = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
-                if (student == null)
+                return new StudentResponse
                 {
-                    throw new Exception("Student not found");
-                }
-
-                var studentDto = _mapper.Map<StudentDto>(student);
-                return studentDto;
+                    Message = "NotFound",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "studentId", "Student not found." } },
+                    student = null
+                };
             }
-            catch (Exception ex)
+
+            if (await EmailUpdateExistsAsync(model.Email, studentToUpdate.Email))
             {
-                throw new Exception("An error occurred while fetching student data", ex);
+                return new StudentResponse
+                {
+                    Message = "ValidationError",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "email", "A student with this email already exists." } }
+                };
             }
-        }
 
-
-        public async Task<Response> UpdateStudentAsync(int studentId, UpdateStudentDto model)
-        {
-            try
+            var validationErrors = _updateStudentValidator.Validate(model);
+            if (validationErrors.Any())
             {
-                var studentToUpdate = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
-                if (studentToUpdate == null)
+                return new StudentResponse
                 {
-                    throw new Exception(ErrorMsg.NotFound);
-                }
+                    Message = "ValidationFailed",
+                    isSucceeded = false,
+                    Errors = validationErrors,
+                    student = null
+                };
+            }
 
-                foreach (var property in typeof(UpdateStudentDto).GetProperties())
+            foreach (var property in typeof(UpdateStudentDto).GetProperties())
+            {
+                var value = property.GetValue(model);
+                if (value != null)
                 {
-                    var value = property.GetValue(model);
-                    if (value != null)
+                    var studentProperty = typeof(Student).GetProperty(property.Name);
+                    if (studentProperty != null)
                     {
-                        var studentProperty = typeof(Student).GetProperty(property.Name);
                         studentProperty.SetValue(studentToUpdate, value);
                     }
                 }
-
-               var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
-
-                var studentLogsDto = new StudentLogsDto
-                {
-                    StudentId = studentToUpdate.Id,
-                    Operation = "updated",
-                    OperationTime = DateTime.Now,
-                    UserId = studentToUpdate.AppUserId,
-                };
-                var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
-                var updatedStudentDto = _mapper.Map<UpdateStudentDto>(studentToUpdate);
-                await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
-
-                   return new Response
-                {
-                    Message = "Student updated successfully",
-                    isSucceeded = true,
-                    std = std,
-                }; ;
             }
-            catch (Exception ex)
+
+            var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
+
+            var studentLogsDto = new StudentLogsDto
             {
-                _logger.LogError(ex, "An error occurred while updating the student.");
-                throw new Exception("An error occurred while updating the student.", ex);
-            }
+                StudentId = studentToUpdate.Id,
+                Operation = "updated",
+                OperationTime = DateTime.Now,
+                AdminId = studentToUpdate.AdminId,
+            };
+            var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
+            await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
+
+            return new StudentResponse
+            {
+                Message = "Student updated successfully",
+                isSucceeded = true,
+                Errors = null,
+                student = studentToUpdate
+            };
         }
 
-        public async Task<Pagination<StudentDto>> ShowAllStudentsByUserId(string userId, int pageIndex, int pageSize)
+
+
+        public async Task<Pagination<StudentDto>> ShowAllStudentsByAdminId(Guid adminId, int pageIndex, int pageSize)
         {   
             try
             {
-                var students = await _unitOfWork._studentRepositoryN.GetStudentsByUserIdAsync(userId,pageIndex,pageSize);
+                var students = await _unitOfWork._studentRepositoryNonGeneric.GetStudentsByAdminIdAsync(adminId, pageIndex,pageSize);
 
                 if (students == null || !students.Any())
                 {
                     throw new Exception("No Students Found for the specified User");
                 }
 
-                var totalCount = await _unitOfWork._studentRepositoryN.CountAsyncByUserId(userId);
+                var totalCount = await _unitOfWork._studentRepositoryNonGeneric.CountAsyncByUserId(adminId);
                 var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
 
                 return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
@@ -253,14 +292,9 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
-
-
-
-
-
         public async Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto)
         {
-            var students = await _unitOfWork._studentRepositoryN.SearchStudentsAsync(
+            var students = await _unitOfWork._studentRepositoryNonGeneric.SearchStudentsAsync(
                 searchDto.Name,
                 searchDto.AgeFrom,
                 searchDto.AgeTo,
@@ -271,16 +305,12 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
-        public async Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(int studentId)
+        public async Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(Guid studentId)
         {
-            if (studentId == 0)
-            {
-                throw new ArgumentNullException(nameof(studentId), "Student ID cannot be zero");
-            }
 
             try
             {
-                var studentLogs = await _unitOfWork._studentLogsRepositoryN.GetStudentLogs(studentId);
+                var studentLogs = await _unitOfWork._studentLogsRepositoryNonGeneric.GetStudentLogs(studentId);
              
                 if (studentLogs == null || !studentLogs.Any())
                 {
@@ -295,6 +325,8 @@ namespace Ultatel.BusinessLoginLayer.Services
                 throw new Exception("An error occurred while fetching student logs data", ex);
             }
         }
+
+        
 
 
     }

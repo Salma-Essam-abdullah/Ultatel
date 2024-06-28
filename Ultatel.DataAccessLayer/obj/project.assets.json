@@ -1001,6 +1001,19 @@
           "lib/netstandard2.0/Mono.TextTemplating.dll": {}
         }
       },
+      "Nager.Country/4.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/Nager.Country.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/Nager.Country.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.CodeDom/4.4.0": {
         "type": "package",
         "compile": {
@@ -3173,6 +3186,29 @@
         "mono.texttemplating.nuspec"
       ]
     },
+    "Nager.Country/4.0.0": {
+      "sha512": "fxBi2O9KxFT1ndwSJk9suxzCe3YQYT15qHk3a7ZOoxOH5q8IYT+qvYAoZg7ecjUSqZoIKsgL1lJnGegDua0mCA==",
+      "type": "package",
+      "path": "nager.country/4.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.md",
+        "README.md",
+        "icon.png",
+        "lib/net48/Nager.Country.dll",
+        "lib/net48/Nager.Country.xml",
+        "lib/net6.0/Nager.Country.dll",
+        "lib/net6.0/Nager.Country.xml",
+        "lib/netstandard2.0/Nager.Country.dll",
+        "lib/netstandard2.0/Nager.Country.xml",
+        "lib/netstandard2.1/Nager.Country.dll",
+        "lib/netstandard2.1/Nager.Country.xml",
+        "nager.country.4.0.0.nupkg.sha512",
+        "nager.country.nuspec",
+        "readme.txt"
+      ]
+    },
     "System.CodeDom/4.4.0": {
       "sha512": "2sCCb7doXEwtYAbqzbF/8UAeDRMNmPaQbU2q50Psg1J9KzumyVVCgKQY8s53WIPTufNT0DpSe9QRvVjOzfDWBA==",
       "type": "package",
@@ -4358,6 +4394,7 @@
       "Microsoft.EntityFrameworkCore.Design >= 8.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.6",
+      "Nager.Country >= 4.0.0",
       "Ultatel.Models >= 1.0.0"
     ]
   },
@@ -4428,6 +4465,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.6, )"
+          },
+          "Nager.Country": {
+            "target": "Package",
+            "version": "[4.0.0, )"
           }
         },
         "imports": [

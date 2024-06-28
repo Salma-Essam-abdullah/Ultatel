@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using Ultatel.BusinessLoginLayer.Services;
 using Ultatel.BusinessLoginLayer.Services.Contracts;
 using Ultatel.DataAccessLayer;
@@ -12,6 +11,8 @@ using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities.Identity;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Ultatel.BusinessLoginLayer.Errors;
+using Ultatel.BusinessLoginLayer.Middleware;
 
 namespace Ultatel.Api
 {
@@ -32,19 +33,26 @@ namespace Ultatel.Api
                     builder.AllowAnyHeader();
                 });
             });
-            // Add services to the container.
+
+            builder.Services.AddScoped<CustomExceptionFilter>();
+
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add(new CustomExceptionFilter());
+            });
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                
             });
 
-            // Configure Swagger/OpenAPI
+        
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "El Catalan Hospital API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "El Ultatel API", Version = "v1" });
 
-                // Add JWT Authentication
+             
                 var securityScheme = new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -70,11 +78,11 @@ namespace Ultatel.Api
                 c.AddSecurityRequirement(securityRequirement);
             });
 
-            // Configure DbContext
+           
             builder.Services.AddDbContext<UltatelDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("Ultatel_Connection")));
 
-            // Configure Identity
+    
             builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
@@ -109,16 +117,19 @@ namespace Ultatel.Api
                 options.ClientId = builder.Configuration["Google:ClientId"];
                 options.ClientSecret = builder.Configuration["Google:ClientSecret"];
                 options.CallbackPath = "/signin-google";
-            }); 
+            });
 
-
-            // Add application services
+            builder.Services.AddTransient<UpdateStudentValidator>();
+            builder.Services.AddTransient<StudentValidator>();
+            builder.Services.AddTransient<RegisterUserValidator>();
+            builder.Services.AddTransient<LoginUserValidator>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
             builder.Services.AddScoped<ISecurityService, SecurityService>();
             builder.Services.AddScoped<IStudentService, StudentService>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped(typeof(IStudentRepository), typeof(StudentRepository));
+            builder.Services.AddScoped(typeof(IAdminRepository), typeof(AdminRepository));
             builder.Services.AddScoped(typeof(IStudentLogsRepository), typeof(StudentsLogsRepository));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -134,9 +145,12 @@ namespace Ultatel.Api
                                .AllowAnyHeader();
                     });
             });
+
+          
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.UseMiddleware<ExceptionMiddleware>();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
