@@ -5,6 +5,6 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
 {
     public interface IUserService
     {
-        Task<Response> LoginUserAsync(LoginDto model);
+        Task<ValidationResponse> LoginUserAsync(LoginDto model);
     }
 }

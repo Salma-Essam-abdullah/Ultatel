@@ -8,11 +8,9 @@ using Ultatel.Models.Entities;
 
 namespace Ultatel.BusinessLoginLayer.Responses
 {
-    public class StudentResponse
+    public class StudentResponse:ValidationResponse
     {
-        public string Message { get; set; }
-        public bool isSucceeded { get; set; }
-        public Dictionary<string, string> Errors { get; set; }
+    
         public Student student { get; set; }
         public List<StudentDto> Students { get; set; }
 

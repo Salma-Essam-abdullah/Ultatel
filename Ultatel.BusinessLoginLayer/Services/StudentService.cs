@@ -86,11 +86,11 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<Response> DeleteStudentAsync(Guid studentId)
+        public async Task<ValidationResponse> DeleteStudentAsync(Guid studentId)
         {
             if (studentId == Guid.Empty)
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "Invalid",
                     isSucceeded = false,
@@ -101,7 +101,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             var model = await _unitOfWork._studentRepository.GetByIdAsync(studentId);
             if (model == null)
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,
@@ -111,7 +111,7 @@ namespace Ultatel.BusinessLoginLayer.Services
 
             await _unitOfWork._studentRepository.DeleteAsync(studentId);
 
-            return new Response
+            return new ValidationResponse
             {
                 Message = "Student deleted successfully",
                 isSucceeded = true

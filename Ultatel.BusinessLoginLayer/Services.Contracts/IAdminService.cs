@@ -5,9 +5,9 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
 {
     public interface IAdminService
     {
-        Task<Response> RegisterSuperAdminAsync(RegisterDto model);
+        Task<ValidationResponse> RegisterSuperAdminAsync(RegisterDto model);
 
-        Task<Response> RegisterAdminAsync(RegisterDto model);
+        Task<ValidationResponse> RegisterAdminAsync(RegisterDto model);
 
         Task<AdminDto> GetAdminByUserId(string userId);
 

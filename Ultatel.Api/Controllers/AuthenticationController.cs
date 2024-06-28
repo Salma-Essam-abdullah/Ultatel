@@ -29,7 +29,7 @@ namespace Ultatel.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "InvalidProperties",
                     isSucceeded = false,
@@ -52,7 +52,7 @@ namespace Ultatel.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "InvalidProperties",
                     isSucceeded = false,
@@ -76,7 +76,7 @@ namespace Ultatel.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "InvalidProperties",
                     isSucceeded = false,

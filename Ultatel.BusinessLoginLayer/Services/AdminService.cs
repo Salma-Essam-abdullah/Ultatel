@@ -27,12 +27,12 @@ namespace Ultatel.BusinessLoginLayer.Services
             _unitOfWork = unitOfWork;
             _validator = validator;
         }
-        public async Task<Response> RegisterSuperAdminAsync(RegisterDto model)
+        public async Task<ValidationResponse> RegisterSuperAdminAsync(RegisterDto model)
         {
             var validationErrors = _validator.Validate(model);
             if (validationErrors.Count > 0)
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "ValidationError",
                     isSucceeded = false,
@@ -66,7 +66,7 @@ namespace Ultatel.BusinessLoginLayer.Services
 
             if (errors.Any())
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "ValidationFailed",
                     isSucceeded = false,
@@ -80,7 +80,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             if (!result.Succeeded)
             {
                 errors = result.Errors.ToDictionary(e => e.Code, e => e.Description);
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "SuperAdminRegistrationFailed",
                     isSucceeded = false,
@@ -95,7 +95,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                 if (!roleResult.Succeeded)
                 {
                     errors = roleResult.Errors.ToDictionary(e => e.Code, e => e.Description);
-                    return new Response
+                    return new ValidationResponse
                     {
                         Message = "RoleCreationFailed",
                         isSucceeded = false,
@@ -108,7 +108,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             if (!roleAssignResult.Succeeded)
             {
                 errors = roleAssignResult.Errors.ToDictionary(e => e.Code, e => e.Description);
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "RoleAssignmentFailed",
                     isSucceeded = false,
@@ -120,7 +120,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             var superAdmin = _mapper.Map<SuperAdmin>(superAdminDto);
             await _unitOfWork._superAdminRepository.AddAsync(superAdmin);
 
-            return new Response
+            return new ValidationResponse
             {
                 Message = "SuperAdminRegisteredSuccessfully",
                 isSucceeded = true
@@ -129,12 +129,12 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<Response> RegisterAdminAsync(RegisterDto model)
+        public async Task<ValidationResponse> RegisterAdminAsync(RegisterDto model)
         {
             var validationErrors = _validator.Validate(model);
             if (validationErrors.Count > 0)
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "ValidationError",
                     isSucceeded = false,
@@ -168,7 +168,7 @@ namespace Ultatel.BusinessLoginLayer.Services
 
             if (errors.Any())
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "ValidationFailed",
                     isSucceeded = false,
@@ -182,7 +182,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             if (!result.Succeeded)
             {
                 errors = result.Errors.ToDictionary(e => e.Code, e => e.Description);
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "AdminRegistrationFailed",
                     isSucceeded = false,
@@ -197,7 +197,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                 if (!roleResult.Succeeded)
                 {
                     errors = roleResult.Errors.ToDictionary(e => e.Code, e => e.Description);
-                    return new Response
+                    return new ValidationResponse
                     {
                         Message = "RoleCreationFailed",
                         isSucceeded = false,
@@ -210,7 +210,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             if (!roleAssignResult.Succeeded)
             {
                 errors = roleAssignResult.Errors.ToDictionary(e => e.Code, e => e.Description);
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "RoleAssignmentFailed",
                     isSucceeded = false,
@@ -222,7 +222,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             var admin = _mapper.Map<Admin>(adminDto);
             await _unitOfWork._adminRepository.AddAsync(admin);
 
-            return new Response
+            return new ValidationResponse
             {
                 Message = "AdminRegisteredSuccessfully",
                 isSucceeded = true

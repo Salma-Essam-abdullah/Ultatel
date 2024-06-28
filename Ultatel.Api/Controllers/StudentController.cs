@@ -61,7 +61,7 @@ namespace Ultatel.Api.Controllers
         {
             if (studentId == Guid.Empty)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "Invalid",
                     isSucceeded = false,
@@ -73,7 +73,7 @@ namespace Ultatel.Api.Controllers
 
             if (result == null)
             {
-                return NotFound(new Response
+                return NotFound(new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,
@@ -90,7 +90,7 @@ namespace Ultatel.Api.Controllers
         {
             if (studentId == Guid.Empty)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "Invalid",
                     isSucceeded = false,
@@ -102,7 +102,7 @@ namespace Ultatel.Api.Controllers
 
             if (result == null)
             {
-                return NotFound(new Response
+                return NotFound(new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,
@@ -123,7 +123,7 @@ namespace Ultatel.Api.Controllers
 
             if (result == null)
             {
-                return NotFound(new Response
+                return NotFound(new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,
@@ -141,7 +141,7 @@ namespace Ultatel.Api.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "InvalidProperties",
                     isSucceeded = false,
@@ -155,7 +155,7 @@ namespace Ultatel.Api.Controllers
             var studentBeforeUpdate = await _studentService.ShowStudentAsync(studentId);
             if (studentBeforeUpdate == null)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,
@@ -191,7 +191,7 @@ namespace Ultatel.Api.Controllers
 
                 if (result == null)
                 {
-                    return NotFound(new Response
+                    return NotFound(new ValidationResponse
                     {
                         Message = "NotFound",
                         isSucceeded = false,
@@ -203,7 +203,7 @@ namespace Ultatel.Api.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new Response
+                return StatusCode(500, new ValidationResponse
                 {
                     Message = "Error",
                     isSucceeded = false,
@@ -227,7 +227,7 @@ namespace Ultatel.Api.Controllers
         {
             if (studentId == Guid.Empty)
             {
-                return BadRequest(new Response
+                return BadRequest(new ValidationResponse
                 {
                     Message = "Invalid",
                     isSucceeded = false,
@@ -239,7 +239,7 @@ namespace Ultatel.Api.Controllers
 
             if (result == null || !result.Any())
             {
-                return NotFound(new Response
+                return NotFound(new ValidationResponse
                 {
                     Message = "NotFound",
                     isSucceeded = false,

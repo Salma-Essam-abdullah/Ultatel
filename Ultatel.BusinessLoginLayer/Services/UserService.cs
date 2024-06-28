@@ -29,12 +29,12 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<Response> LoginUserAsync(LoginDto model)
+        public async Task<ValidationResponse> LoginUserAsync(LoginDto model)
         {
             var validationErrors = _loginValidator.Validate(model);
             if (validationErrors.Count > 0)
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "ValidationError",
                     isSucceeded = false,
@@ -60,7 +60,7 @@ namespace Ultatel.BusinessLoginLayer.Services
 
             if (errors.Any())
             {
-                return new Response
+                return new ValidationResponse
                 {
                     Message = "LoginFailed",
                     isSucceeded = false,
@@ -92,7 +92,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             }
 
             _securityService.SecureToken(claims, out JwtSecurityToken token, out string tokenString);
-            return new Response
+            return new ValidationResponse
             {
                 Message = tokenString,
                 isSucceeded = true,

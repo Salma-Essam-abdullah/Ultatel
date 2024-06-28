@@ -9,7 +9,7 @@ using Ultatel.Models.Entities;
 
 namespace Ultatel.BusinessLoginLayer.Errors
 {
-    public class UpdateStudentValidator
+    public class UpdateStudentValidator 
     {
         public Dictionary<string, string> Validate(UpdateStudentDto student)
         {
