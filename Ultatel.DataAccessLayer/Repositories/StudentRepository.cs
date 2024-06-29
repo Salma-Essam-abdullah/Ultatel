@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 using System.Linq.Expressions;
 using Ultatel.DataAccessLayer.Repositories.Contracts;
 using Ultatel.Models.Entities;
@@ -33,15 +34,17 @@ namespace Ultatel.DataAccessLayer.Repositories
 
 
 
-        public async Task<IEnumerable<Student>> SearchStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender)
+        public async Task<IEnumerable<Student>> SearchStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender, int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
             var query = _dbSet.AsQueryable();
 
+            // Filter by name
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(s => s.FirstName.Contains(name) || s.LastName.Contains(name));
             }
 
+            // Filter by age range
             if (ageFrom.HasValue)
             {
                 var ageFromDate = DateTime.Today.AddYears(-ageFrom.Value);
@@ -54,21 +57,36 @@ namespace Ultatel.DataAccessLayer.Repositories
                 query = query.Where(s => s.BirthDate >= ageToDate);
             }
 
+            // Filter by country
             if (!string.IsNullOrEmpty(country))
             {
                 query = query.Where(s => s.Country == country);
             }
 
+            // Filter by gender
             if (gender.HasValue)
             {
                 query = query.Where(s => s.Gender == gender.Value);
             }
 
-            return await query.ToListAsync();
+            // Sorting
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                query = isDescending
+                    ? query.OrderByDescending(e => EF.Property<object>(e, sortBy))
+                    : query.OrderBy(e => EF.Property<object>(e, sortBy));
+            }
+
+            // Pagination
+            query = query.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+            // Include related entities
+            return await query.Include(s => s.Admins).ToListAsync();
         }
 
 
-       
+
+
         public async Task<IEnumerable<Student>> GetAllStudentsAsync( int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
             IQueryable<Student> query = _context.Students;

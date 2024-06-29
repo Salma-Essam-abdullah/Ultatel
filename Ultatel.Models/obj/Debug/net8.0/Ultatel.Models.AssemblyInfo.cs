@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Ultatel.Models")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d9f7e742e1df426637f9d005b6274f2acb7ef6a6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bfd962698e5245efaac7901211c9d3c883c7588f")]
 [assembly: System.Reflection.AssemblyProductAttribute("Ultatel.Models")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Ultatel.Models")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

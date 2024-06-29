@@ -137,7 +137,7 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-       public async Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending)
+       public async Task<StudentResponse> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
            
                 var students = await _unitOfWork._studentRepositoryNonGeneric.GetAllStudentsAsync(pageIndex, pageSize,sortBy,isDescending);
@@ -147,9 +147,19 @@ namespace Ultatel.BusinessLoginLayer.Services
                 }
 
                 var totalCount = await _unitOfWork._studentRepository.CountAsync();
-                var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
+                var studentsList = _mapper.Map<IEnumerable<StudentDto>>(students);
 
-                return new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentDtos.ToList());
+                var studentDtos =  new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentsList.ToList());
+
+            return new StudentResponse
+            {
+                Message = "Student data retreived successfully",
+                isSucceeded = true,
+                StudentDtos = studentDtos
+            };
+
+
+
 
         }
           
@@ -166,7 +176,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                     Message = "Invalid",
                     isSucceeded = false,
                     Errors = new Dictionary<string, string> { { "studentId", "The provided student ID is empty." } },
-                    student = null
+                    
                 };
             }
 
@@ -178,16 +188,16 @@ namespace Ultatel.BusinessLoginLayer.Services
                     Message = "NotFound",
                     isSucceeded = false,
                     Errors = new Dictionary<string, string> { { "studentId", "Student not found." } },
-                    student = null
+                   
                 };
             }
-
+            var std = _mapper.Map<StudentDto>(student);
             return new StudentResponse
             {
                 Message = "Success",
                 isSucceeded = true,
                 Errors = null,
-                student = student
+                studentDto = std
             };
         }
         public async Task<bool> EmailUpdateExistsAsync(string newEmail, string currentEmail)
@@ -210,7 +220,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                     Message = "Invalid",
                     isSucceeded = false,
                     Errors = new Dictionary<string, string> { { "studentId", "The provided student ID is empty." } },
-                    student = null
+                    
                 };
             }
 
@@ -222,7 +232,6 @@ namespace Ultatel.BusinessLoginLayer.Services
                     Message = "NotFound",
                     isSucceeded = false,
                     Errors = new Dictionary<string, string> { { "studentId", "Student not found." } },
-                    student = null
                 };
             }
 
@@ -244,7 +253,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                     Message = "ValidationFailed",
                     isSucceeded = false,
                     Errors = validationErrors,
-                    student = null
+                   
                 };
             }
 
@@ -273,27 +282,41 @@ namespace Ultatel.BusinessLoginLayer.Services
             //var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
             //await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
 
+            var stdUpdated = _mapper.Map<StudentDto>(studentToUpdate);
             return new StudentResponse
             {
                 Message = "Student updated successfully",
                 isSucceeded = true,
                 Errors = null,
-                student = studentToUpdate
+                studentDto = stdUpdated
             };
         }
 
 
 
-        public async Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto)
+        public async Task<StudentResponse> SearchStudentsAsync(StudentSearchDto searchDto, int pageIndex, int pageSize, string? sortBy, bool isDescending)
         {
             var students = await _unitOfWork._studentRepositoryNonGeneric.SearchStudentsAsync(
                 searchDto.Name,
                 searchDto.AgeFrom,
                 searchDto.AgeTo,
                 searchDto.Country,
-                searchDto.Gender
+                searchDto.Gender,
+
+                pageIndex, pageSize, sortBy, isDescending
             );
-            return _mapper.Map<IEnumerable<StudentDto>>(students);
+           
+            var totalCount = await _unitOfWork._studentRepository.CountAsync();
+            var studentsList = _mapper.Map<IEnumerable<StudentDto>>(students);
+
+            var studentDtos = new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentsList.ToList());
+            return new StudentResponse
+            {
+                Message = "Student updated successfully",
+                isSucceeded = true,
+                Errors = null,
+                StudentDtos = studentDtos
+            };
         }
 
 

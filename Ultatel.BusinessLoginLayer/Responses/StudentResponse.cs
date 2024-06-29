@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ultatel.BusinessLoginLayer.Dtos;
+using Ultatel.BusinessLoginLayer.Helpers;
 using Ultatel.Models.Entities;
 
 namespace Ultatel.BusinessLoginLayer.Responses
@@ -12,8 +13,10 @@ namespace Ultatel.BusinessLoginLayer.Responses
     {
     
         public StudentDto studentDto {  get; set; }
-        public Student student { get; set; }
-        public List<StudentDto> Students { get; set; }
+      
+      
+
+        public Pagination<StudentDto> StudentDtos { get; set; }
 
     }
 }

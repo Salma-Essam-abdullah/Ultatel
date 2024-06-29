@@ -11,14 +11,35 @@ namespace Ultatel.BusinessLoginLayer.Errors
         {
             var errors = new Dictionary<string, string>();
 
+
+
+            // Validate Fullname
+            if (string.IsNullOrWhiteSpace(registerDto.fullName))
+            {
+                errors["fullName"] = "Full Name is required.";
+            }
+            else if (registerDto.fullName.Length < 3)
+            {
+                errors["fullName"] = "Full Name cannot be shorter than 3 characters.";
+            }
+            else if (registerDto.fullName.Length > 20)
+            {
+                errors["fullName"] = "Full Name cannot be longer than 20 characters.";
+            }
+          
+
             // Validate UserName
             if (string.IsNullOrWhiteSpace(registerDto.UserName))
             {
                 errors["userName"] = "UserName is required.";
             }
-            else if (registerDto.UserName.Length > 50)
+            else if (registerDto.UserName.Length < 3)
             {
-                errors["userName"] = "UserName cannot be longer than 50 characters.";
+                errors["userName"] = "UserName cannot be shorter than 3 characters.";
+            }
+            else if (registerDto.UserName.Length > 20)
+            {
+                errors["userName"] = "UserName cannot be longer than 20 characters.";
             }
             else if (registerDto.UserName.Contains(" "))
             {

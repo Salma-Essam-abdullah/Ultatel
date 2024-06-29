@@ -6,8 +6,18 @@ namespace Ultatel.BusinessLoginLayer.Dtos
 {
     public class RegisterDto
     {
+
         [Required]
-        [StringLength(50)]
+        [StringLength(20)]
+        [MinLength(3)]
+
+
+        public string fullName { get; set; }
+
+        [Required]
+        [StringLength(20)]
+        [MinLength(3)]
+
         public string UserName { get; set; }
 
         [Required]

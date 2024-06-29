@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Ultatel.BusinessLoginLayer.Dtos;
 using Ultatel.BusinessLoginLayer.Helpers;
 using Ultatel.BusinessLoginLayer.Responses;
@@ -11,10 +12,10 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
         Task<StudentResponse> UpdateStudentAsync(Guid studentId, UpdateStudentDto model);
         Task<ValidationResponse> DeleteStudentAsync(Guid studentId);
         Task<StudentResponse> ShowStudentAsync(Guid studentId);
-        Task<Pagination<StudentDto>> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending);
+        Task<StudentResponse> ShowAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
 
-        Task<IEnumerable<StudentDto>> SearchStudentsAsync(StudentSearchDto searchDto);
+        Task<StudentResponse> SearchStudentsAsync(StudentSearchDto searchDto, int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
         Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(Guid studentId);
 

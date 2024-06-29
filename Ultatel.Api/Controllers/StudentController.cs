@@ -49,7 +49,7 @@ namespace Ultatel.Api.Controllers
 
 
         [Authorize(Roles = "Admin,superAdmin")]
-        [HttpGet("ShowStudent/{studentId}")]
+        [HttpGet("{studentId}")]
         public async Task<ActionResult> ShowStudent(Guid studentId)
         {
             if (studentId == Guid.Empty)
@@ -78,7 +78,7 @@ namespace Ultatel.Api.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("DeleteStudent/{studentId}")]
+        [HttpDelete("{studentId}")]
         public async Task<ActionResult> DeleteStudent(Guid studentId)
         {
             if (studentId == Guid.Empty)
@@ -129,7 +129,7 @@ namespace Ultatel.Api.Controllers
     
 
         [Authorize(Roles = "Admin")]
-        [HttpPatch("UpdateStudent/{studentId}")]
+        [HttpPatch("{studentId}")]
         public async Task<ActionResult> UpdateStudent(Guid studentId, [FromBody] UpdateStudentDto model)
         {
             if (!ModelState.IsValid)
@@ -169,9 +169,9 @@ namespace Ultatel.Api.Controllers
 
         [Authorize(Roles = "Admin,superAdmin")]
         [HttpPost("Search")]
-        public async Task<IActionResult> Search(StudentSearchDto searchDto)
+        public async Task<IActionResult> Search(StudentSearchDto searchDto , string sortBy = null, bool isDescending = false, int pageIndex = 1, int pageSize = 10)
         {
-            var students = await _studentService.SearchStudentsAsync(searchDto);
+            var students = await _studentService.SearchStudentsAsync(searchDto,pageIndex,pageSize,sortBy,isDescending);
             return Ok(students);
         }
 
