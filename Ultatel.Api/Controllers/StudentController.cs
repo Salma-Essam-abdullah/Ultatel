@@ -156,7 +156,7 @@ namespace Ultatel.Api.Controllers
                 });
             }
 
-            var updatedStudent = await _studentService.UpdateStudentAsync(studentId, model);
+            var updatedStudent = await _studentService.UpdateStudentAsync(studentId, model, User);
 
             if (!updatedStudent.isSucceeded)
             {

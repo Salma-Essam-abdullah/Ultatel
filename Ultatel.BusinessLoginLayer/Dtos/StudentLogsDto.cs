@@ -4,13 +4,17 @@ namespace Ultatel.BusinessLoginLayer.Dtos
 {
     public class StudentLogsDto
     {
-        public string Operation { get; set; } // e.g., "Created", "Updated"
-        public DateTime OperationTime { get; set; }
         public Guid StudentId { get; set; }
+        public Guid? UpdateAdminId { get; set; }
 
-        public Guid AdminId { get; set; }
+        public Guid? CreateAdminId { get; set; }
 
-        public string UserName { get; set; }
+        public DateTime? UpdateTimeStamps { get; set; }
+        public DateTime? CreateTimeStamps { get; set; }
+
+        public string UpdateUserName { get; set; }
+
+        public string CreateUserName { get; set; }
 
     }
 }

@@ -17,7 +17,9 @@ namespace Ultatel.BusinessLoginLayer.Helpers
             CreateMap<UpdateStudentDto, Student>().ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender)).ReverseMap();
             CreateMap<StudentLogsDto, StudentLogs>();
             CreateMap<StudentLogs, StudentLogsDto>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Admin.AppUser.UserName));
+                .ForMember(dest => dest.UpdateUserName, opt => opt.MapFrom(src => src.UpdateAdmin.AppUser.UserName))
+                .ForMember(dest => dest.CreateUserName, opt => opt.MapFrom(src => src.CreateAdmin.AppUser.UserName));
+            
 
         }
     }

@@ -86,6 +86,16 @@ namespace Ultatel.BusinessLoginLayer.Services
 
             var std = await _unitOfWork._studentRepository.AddAsync(student);
 
+            var studentLog = new StudentLogs
+            {
+                StudentId = std.Id,
+                CreateAdminId = adminId,
+                CreateTimeStamps = DateTime.Now,
+            };
+            await _unitOfWork._studentLogsRepository.AddAsync(studentLog);
+
+
+
             var studentDto = _mapper.Map<StudentDto>(std);
 
             return new StudentResponse
@@ -211,7 +221,7 @@ namespace Ultatel.BusinessLoginLayer.Services
         }
 
 
-        public async Task<StudentResponse> UpdateStudentAsync(Guid studentId, UpdateStudentDto model)
+        public async Task<StudentResponse> UpdateStudentAsync(Guid studentId, UpdateStudentDto model, ClaimsPrincipal user)
         {
             if (studentId == Guid.Empty)
             {
@@ -270,17 +280,26 @@ namespace Ultatel.BusinessLoginLayer.Services
                 }
             }
 
-            //var std = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
 
-            //var studentLogsDto = new StudentLogsDto
-            //{
-            //    StudentId = studentToUpdate.Id,
-            //    Operation = "updated",
-            //    OperationTime = DateTime.Now,
-            //    AdminId = studentToUpdate.AdminId,
-            //};
-            //var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
-            //await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
+            var userGuidClaim = user.FindFirst("UserGuid");
+            if (userGuidClaim == null || string.IsNullOrEmpty(userGuidClaim.Value) || !Guid.TryParse(userGuidClaim.Value, out var adminId))
+            {
+                return new StudentResponse
+                {
+                    Message = "AdminIdError",
+                    isSucceeded = false,
+                    Errors = new Dictionary<string, string> { { "adminId", "Invalid admin ID." } }
+                };
+            }
+
+
+            var studentLog = new StudentLogs
+            {
+                StudentId = studentToUpdate.Id,
+                UpdateAdminId = adminId,
+                UpdateTimeStamps = DateTime.Now,
+            };
+            await _unitOfWork._studentLogsRepository.AddAsync(studentLog);
 
             var stdUpdated = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
 
