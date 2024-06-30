@@ -293,13 +293,12 @@ namespace Ultatel.BusinessLoginLayer.Services
             }
 
 
-            var studentLog = new StudentLogs
-            {
-                StudentId = studentToUpdate.Id,
-                UpdateAdminId = adminId,
-                UpdateTimeStamps = DateTime.Now,
-            };
-            await _unitOfWork._studentLogsRepository.AddAsync(studentLog);
+            var studentlogsToUpdate = await _unitOfWork._studentLogsRepositoryNonGeneric.GetStudentLogsById(studentId);
+            studentlogsToUpdate.UpdateTimeStamps = DateTime.Now;
+            studentlogsToUpdate.UpdateAdminId = adminId;
+
+            await _unitOfWork._studentLogsRepository.UpdateAsync(studentlogsToUpdate);
+
 
             var stdUpdated = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
 
@@ -348,25 +347,15 @@ namespace Ultatel.BusinessLoginLayer.Services
 
 
 
-        public async Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(Guid studentId)
+        public async Task <StudentLogsDto> ShowStudentLogs(Guid studentId)
         {
 
-            try
-            {
-                var studentLogs = await _unitOfWork._studentLogsRepositoryNonGeneric.GetStudentLogs(studentId);
+                var studentLogs = await _unitOfWork._studentLogsRepositoryNonGeneric.GetStudentLogsById(studentId);
              
-                if (studentLogs == null || !studentLogs.Any())
-                {
-                    throw new Exception("Student Logs not found");
-                }
-
-                var studentLogsDto = _mapper.Map<IEnumerable<StudentLogsDto>>(studentLogs);
+       
+                var studentLogsDto = _mapper.Map<StudentLogsDto>(studentLogs);
                 return studentLogsDto;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("An error occurred while fetching student logs data", ex);
-            }
+            
         }
 
         

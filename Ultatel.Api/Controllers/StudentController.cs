@@ -191,15 +191,7 @@ namespace Ultatel.Api.Controllers
 
             var result = await _studentService.ShowStudentLogs(studentId);
 
-            if (result == null || !result.Any())
-            {
-                return NotFound(new ValidationResponse
-                {
-                    Message = "NotFound",
-                    isSucceeded = false,
-                    Errors = new Dictionary<string, string> { { "logs", "No logs found for the given student ID." } }
-                });
-            }
+           
 
             return Ok(result);
         }

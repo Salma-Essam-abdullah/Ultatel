@@ -17,7 +17,7 @@ namespace Ultatel.BusinessLoginLayer.Services.Contracts
 
         Task<StudentResponse> SearchStudentsAsync(StudentSearchDto searchDto, int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
-        Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(Guid studentId);
+        Task<StudentLogsDto> ShowStudentLogs(Guid studentId);
 
         Task<bool> EmailExistsAsync(string email);
         Task<bool> EmailUpdateExistsAsync(string newEmail, string currentEmail);

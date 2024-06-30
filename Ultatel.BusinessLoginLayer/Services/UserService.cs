@@ -84,6 +84,7 @@ namespace Ultatel.BusinessLoginLayer.Services
                 if (role == "Admin" && admin != null)
                 {
                     claims.Add(new Claim("UserGuid", admin.Id.ToString(), ClaimValueTypes.String));
+                    claims.Add(new Claim("IsSuperAdmin", "false"));
                 }
                 if (role == "superAdmin")
                 {
@@ -96,6 +97,7 @@ namespace Ultatel.BusinessLoginLayer.Services
             {
                 Message = tokenString,
                 isSucceeded = true,
+             
             };
         }
     }

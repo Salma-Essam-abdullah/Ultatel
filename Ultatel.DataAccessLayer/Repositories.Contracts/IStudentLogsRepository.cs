@@ -6,6 +6,7 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
     public interface IStudentLogsRepository
     {
 
-        Task<IEnumerable<StudentLogs>> GetStudentLogs(Guid studentId);
+        Task<StudentLogs> GetStudentLogsById(Guid studentId);
+
     }
 }
