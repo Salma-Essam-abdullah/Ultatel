@@ -18,7 +18,12 @@ namespace Ultatel.DataAccessLayer.Repositories
         public async Task<IEnumerable<StudentLogs>> GetStudentLogs(Guid studentId)
         {
             return await _dbSet
-               .Where(s => s.StudentId == studentId).Include(a => a.UpdateAdmin).Include(a=>a.CreateAdmin).ThenInclude(admin => admin.AppUser).ToListAsync();
+        .Where(s => s.StudentId == studentId)
+        .Include(s => s.UpdateAdmin)
+            .ThenInclude(ua => ua.AppUser)
+        .Include(s => s.CreateAdmin)
+            .ThenInclude(ca => ca.AppUser)
+        .ToListAsync();
         }
     }
 }
