@@ -282,13 +282,15 @@ namespace Ultatel.BusinessLoginLayer.Services
             //var studentLogs = _mapper.Map<StudentLogs>(studentLogsDto);
             //await _unitOfWork._studentLogsRepository.AddAsync(studentLogs);
 
-            var stdUpdated = _mapper.Map<StudentDto>(studentToUpdate);
+            var stdUpdated = await _unitOfWork._studentRepository.UpdateAsync(studentToUpdate);
+
+            var studentDto = _mapper.Map<StudentDto>(stdUpdated);
             return new StudentResponse
             {
                 Message = "Student updated successfully",
                 isSucceeded = true,
                 Errors = null,
-                studentDto = stdUpdated
+                studentDto = studentDto
             };
         }
 
@@ -302,22 +304,29 @@ namespace Ultatel.BusinessLoginLayer.Services
                 searchDto.AgeTo,
                 searchDto.Country,
                 searchDto.Gender,
-
                 pageIndex, pageSize, sortBy, isDescending
             );
-           
-            var totalCount = await _unitOfWork._studentRepository.CountAsync();
+
+            var totalCount = await _unitOfWork._studentRepositoryNonGeneric.CountStudentsAsync(
+                searchDto.Name,
+                searchDto.AgeFrom,
+                searchDto.AgeTo,
+                searchDto.Country,
+                searchDto.Gender
+            );
+
             var studentsList = _mapper.Map<IEnumerable<StudentDto>>(students);
 
             var studentDtos = new Pagination<StudentDto>(pageIndex, pageSize, totalCount, studentsList.ToList());
             return new StudentResponse
             {
-                Message = "Student updated successfully",
+                Message = "Student search completed successfully",
                 isSucceeded = true,
                 Errors = null,
                 StudentDtos = studentDtos
             };
         }
+
 
 
         public async Task<IEnumerable<StudentLogsDto>> ShowStudentLogs(Guid studentId)

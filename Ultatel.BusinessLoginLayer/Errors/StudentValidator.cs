@@ -41,7 +41,7 @@ public class StudentValidator
 
         if (student.BirthDate > DateTime.Now.AddYears(-4))
         {
-            errors["birthDate"] = "BirthDate must be at least 4 years ago";
+            errors["birthDate"] = "BirthDate must be at least 4 years ";
         }
      
         if (string.IsNullOrWhiteSpace(student.Country))

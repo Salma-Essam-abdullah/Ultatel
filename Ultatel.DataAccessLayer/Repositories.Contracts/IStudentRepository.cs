@@ -17,6 +17,6 @@ namespace Ultatel.DataAccessLayer.Repositories.Contracts
 
         Task<IEnumerable<Student>> GetAllStudentsAsync(int pageIndex, int pageSize, string? sortBy, bool isDescending);
 
-       
+        Task<int> CountStudentsAsync(string name, int? ageFrom, int? ageTo, string country, Gender? gender);
     }
 }   
